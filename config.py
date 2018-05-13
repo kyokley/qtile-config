@@ -24,9 +24,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click
+import os
+import subprocess
+
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
-from libqtile import layout, bar, widget
+from libqtile import layout, bar, widget, hook
 
 try:
     from typing import List  # noqa: F401
@@ -39,6 +42,8 @@ keys = [
     # Switch between windows in current stack pane
     Key([mod], "j", lazy.layout.down()),
     Key([mod], "k", lazy.layout.up()),
+    Key([mod], "h", lazy.layout.decrease_ratio()),
+    Key([mod], "l", lazy.layout.increase_ratio()),
 
     # Move windows up or down in current stack
     Key([mod, "control"], "j", lazy.layout.shuffle_down()),
@@ -67,7 +72,24 @@ keys = [
     #Key([mod], "r", lazy.spawncmd()),
 ]
 
-groups = [Group(i) for i in "asdfuiop"]
+groups = [Group(i, persist=False) for i in "1234567890"]
+groups.extend([Group('5',
+                     matches=[Match(wm_class=['LibreOffice'])],
+                     label='5:LO'),
+               Group('6',
+                     matches=[Match(wm_class=['vivaldi-stable']),
+                              Match(wm_class=['Vivaldi-stable']),
+                              Match(wm_class=['google-chrome']),
+                              Match(wm_class=['Google-chrome']),
+                              ],
+                     label='6:Web'),
+               Group('7',
+                     matches=[Match(wm_class=['spotify']),
+                              Match(wm_class=['Spotify']),
+                              ],
+                     label='7:Music'),
+               ])
+
 
 for i in groups:
     keys.extend([
@@ -93,7 +115,7 @@ extension_defaults = widget_defaults.copy()
 
 screens = [
     Screen(
-        bottom=bar.Bar(
+        top=bar.Bar(
             [
                 widget.GroupBox(),
                 widget.Prompt(),
@@ -119,7 +141,7 @@ mouse = [
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: List
 main = None
-follow_mouse_focus = True
+follow_mouse_focus = False
 bring_front_click = False
 cursor_warp = False
 floating_layout = layout.Floating(float_rules=[
@@ -150,3 +172,8 @@ focus_on_window_activation = "smart"
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+
+@hook.subscribe.startup_once
+def autostart():
+    script = os.path.expanduser('~/.config/qtile/autostart.sh')
+    subprocess.call([script])
