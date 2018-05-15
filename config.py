@@ -46,8 +46,8 @@ keys = [
     Key([mod], "l", lazy.layout.increase_ratio()),
 
     # Move windows up or down in current stack
-    Key([mod, "control"], "j", lazy.layout.shuffle_down()),
-    Key([mod, "control"], "k", lazy.layout.shuffle_up()),
+    Key([mod, "shift"], "j", lazy.layout.shuffle_down()),
+    Key([mod, "shift"], "k", lazy.layout.shuffle_up()),
     Key([mod], "Return", lazy.layout.swap_main()),
 
     # Switch window focus to other pane(s) of stack
@@ -69,7 +69,7 @@ keys = [
 
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
-    #Key([mod], "r", lazy.spawncmd()),
+    Key([mod], "r", lazy.spawncmd()),
 ]
 
 groups = [Group(i, persist=False) for i in "1234"]
@@ -107,7 +107,8 @@ groups.extend([Group('5',
                      label='9:Email',
                      persist=False,
                      ),
-               Group('0', persist=False),
+               Group('0',
+                     persist=False),
                #Group('-', label='tmp', persist=False),
                #Group('=', label='swp', persist=False),
                ])
