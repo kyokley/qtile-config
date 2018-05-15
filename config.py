@@ -42,8 +42,8 @@ keys = [
     # Switch between windows in current stack pane
     Key([mod], "j", lazy.layout.down()),
     Key([mod], "k", lazy.layout.up()),
-    Key([mod], "h", lazy.layout.decrease_ratio()),
-    Key([mod], "l", lazy.layout.increase_ratio()),
+    Key([mod], "h", lazy.layout.shrink()),
+    Key([mod], "l", lazy.layout.grow()),
 
     # Move windows up or down in current stack
     Key([mod, "shift"], "j", lazy.layout.shuffle_down()),
@@ -69,7 +69,8 @@ keys = [
 
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
-    Key([mod], "r", lazy.spawncmd()),
+    #Key([mod], "r", lazy.spawncmd()),
+    Key([mod], "r", lazy.spawncmd("dmenu_run")),
 ]
 
 groups = [Group(i, persist=False) for i in "1234"]
