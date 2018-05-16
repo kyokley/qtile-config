@@ -38,6 +38,9 @@ except ImportError:
 
 mod = "mod1"
 
+dmenu_font = 'sans'
+dmenu_fontsize = 16
+
 keys = [
     # Switch between windows in current stack pane
     Key([mod], "j", lazy.layout.down()),
@@ -70,7 +73,8 @@ keys = [
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
     #Key([mod], "r", lazy.spawncmd()),
-    Key([mod], "r", lazy.spawncmd("dmenu_run")),
+    Key([mod], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
+                                                                                    fontsize=dmenu_fontsize))),
 ]
 
 groups = [Group(i, persist=False) for i in "1234"]
