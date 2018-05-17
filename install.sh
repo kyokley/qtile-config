@@ -5,4 +5,6 @@ sudo pip3 install xcffib
 sudo pip3 install cairocffi
 sudo pip3 install qtile
 
-sudo cp qtile.desktop /usr/share/xsessions/
+mkdir -p ~/.config/qtile
+ln -s "$(pwd)/config.py" ~/.config/qtile/config.py
+sudo cp $(pwd)/qtile.desktop /usr/share/xsessions/
