@@ -151,8 +151,6 @@ screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.GroupBox(),
-                widget.Prompt(),
                 widget.WindowName(),
                 widget.TextBox('Vol:'),
                 widget.Volume(
@@ -180,6 +178,13 @@ screens = [
             ],
             24,
         ),
+        bottom=bar.Bar(
+            [
+                widget.GroupBox(),
+                widget.Prompt(),
+            ],
+            24,
+        )
     ),
 ]
 
