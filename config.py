@@ -95,6 +95,10 @@ keys = [
     Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
     Key([], 'XF86AudioLowerVolume', lazy.spawn('amixer -q set Master 10%-')),
     Key([], 'XF86AudioMute', lazy.spawn('amixer -q set Master toggle')),
+
+    ## Brightness Controls
+    Key([], 'XF86MonBrightnessUp', lazy.spawn("xbacklight -inc 10")),
+    Key([], 'XF86MonBrightnessDown', lazy.spawn("xbacklight -dec 10")),
 ]
 
 groups = [Group(i) for i in "1234"]
