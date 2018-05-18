@@ -90,6 +90,11 @@ keys = [
 
     ## PAUSE
     Key([mod, "control"], 'space', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "pause"])),
+
+    ## Volume Controls
+    Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
+    Key([], 'XF86AudioLowerVolume', lazy.spawn('amixer -q set Master 10%-')),
+    Key([], 'XF86AudioMute', lazy.spawn('amixer -q set Master toggle')),
 ]
 
 groups = [Group(i) for i in "1234"]
