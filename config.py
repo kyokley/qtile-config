@@ -47,6 +47,7 @@ keys = [
     Key([mod], "k", lazy.layout.up()),
     Key([mod], "h", lazy.layout.shrink()),
     Key([mod], "l", lazy.layout.grow()),
+
     Key([mod], "n", lazy.layout.normalize()),
     Key([mod], "m", lazy.layout.maximize()),
 
@@ -109,8 +110,7 @@ groups.extend([Group('5',
                               ],
                      label='9:Email',
                      ),
-               Group('0',
-                     init=False),
+               Group('0'),
                ])
 
 for i in groups:
