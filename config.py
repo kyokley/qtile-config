@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile import layout, bar, widget
 
@@ -34,6 +34,9 @@ except ImportError:
     pass
 
 mod = "mod1"
+
+dmenu_font = 'sans'
+dmenu_fontsize = 16
 
 keys = [
     # Switch between windows in current stack pane
@@ -63,10 +66,47 @@ keys = [
 
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
-    Key([mod], "r", lazy.spawncmd()),
+    Key([mod, "control"], "l", lazy.spawn("xscreensaver-command -lock")),
+
+    #Key([mod], "r", lazy.spawncmd()),
+
+    Key([mod], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
+                                                                                    fontsize=dmenu_fontsize))),
 ]
 
-groups = [Group(i) for i in "asdfuiop"]
+groups = [Group(i) for i in "1234"]
+groups.extend([Group('5',
+                     matches=[Match(wm_class=['LibreOffice'])],
+                     label='5:LO',
+                     ),
+               Group('6',
+                     matches=[Match(wm_class=['vivaldi-stable']),
+                              Match(wm_class=['Vivaldi-stable']),
+                              Match(wm_class=['google-chrome']),
+                              Match(wm_class=['Google-chrome']),
+                              ],
+                     label='6:Web',
+                     ),
+               Group('7',
+                     matches=[Match(wm_class=['spotify']),
+                              Match(wm_class=['Spotify']),
+                              ],
+                     label='7:Music',
+                     ),
+               Group('8',
+                     matches=[Match(wm_class=['Pidgin']),
+                              Match(wm_class=['Slack']),
+                              ],
+                     label='8:Chat',
+                     ),
+               Group('9',
+                     matches=[Match(wm_class=['Thunderbird']),
+                              ],
+                     label='9:Email',
+                     ),
+               Group('0',
+                     init=False),
+               ])
 
 for i in groups:
     keys.extend([
