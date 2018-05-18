@@ -78,6 +78,18 @@ keys = [
     Key([mod, "control"], "l", lazy.spawn("xscreensaver-command -lock")),
     Key([mod], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
                                                                                     fontsize=dmenu_fontsize))),
+
+    # Spotify Commands
+    ## NEXT
+    Key([mod, "control"], 'n', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
+    Key([mod, "control"], 'period', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
+
+    ## PREV
+    Key([mod, "control"], 'p', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
+    Key([mod, "control"], 'comma', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
+
+    ## PAUSE
+    Key([mod, "control"], 'space', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "pause"])),
 ]
 
 groups = [Group(i) for i in "1234"]
