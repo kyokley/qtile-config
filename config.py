@@ -75,16 +75,14 @@ keys = [
     Key([mod, "control"], "r", lazy.restart()),
     Key([mod, "control"], "q", lazy.shutdown()),
     Key([mod, "control"], "l", lazy.spawn("xscreensaver-command -lock")),
-    #Key([mod], "r", lazy.spawncmd()),
     Key([mod], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
                                                                                     fontsize=dmenu_fontsize))),
 ]
 
-groups = [Group(i, persist=False) for i in "1234"]
+groups = [Group(i) for i in "1234"]
 groups.extend([Group('5',
                      matches=[Match(wm_class=['LibreOffice'])],
                      label='5:LO',
-                     persist=False,
                      ),
                Group('6',
                      matches=[Match(wm_class=['vivaldi-stable']),
@@ -93,35 +91,27 @@ groups.extend([Group('5',
                               Match(wm_class=['Google-chrome']),
                               ],
                      label='6:Web',
-                     persist=False,
                      ),
                Group('7',
                      matches=[Match(wm_class=['spotify']),
                               Match(wm_class=['Spotify']),
                               ],
                      label='7:Music',
-                     persist=False,
                      ),
                Group('8',
                      matches=[Match(wm_class=['Pidgin']),
                               Match(wm_class=['Slack']),
                               ],
                      label='8:Chat',
-                     persist=False,
                      ),
                Group('9',
                      matches=[Match(wm_class=['Thunderbird']),
                               ],
                      label='9:Email',
-                     persist=False,
                      ),
                Group('0',
-                     persist=False,
                      init=False),
-               #Group('-', label='tmp', persist=False),
-               #Group('=', label='swp', persist=False),
                ])
-
 
 for i in groups:
     keys.extend([
