@@ -26,6 +26,11 @@
 
 import os
 import subprocess
+import random
+import requests
+
+from collections import namedtuple
+from functools import partial
 
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
@@ -35,6 +40,63 @@ try:
     from typing import List  # noqa: F401
 except ImportError:
     pass
+
+rand = random.SystemRandom()
+
+class ProxiedRequest(widget.GenPollText):
+    defaults = [
+        ('http_proxy', None, 'HTTP proxy to use for requests'),
+        ('https_proxy', None, 'HTTPS proxy to use for requests'),
+        ]
+
+    def __init__(self, **config):
+        super().__init__(**config)
+        self.add_defaults(ProxiedRequest.defaults)
+
+    def fetch(self, is_json=True):
+        proxies = {'http': self.http_proxy,
+                   'https': self.https_proxy,
+                   }
+        resp = requests.get(self.URL, proxies=proxies)
+        resp.raise_for_status()
+
+        if is_json:
+            return resp.json()
+        return resp.text
+
+
+WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
+
+class Weather(ProxiedRequest):
+    URL = 'http://api.openweathermap.org/data/2.5/weather?id=4887398&units=imperial&appid=c4f4551816bd45b67708bea102d93522'
+    defaults = [
+        ('low_temp_threshold', 45, 'Temp to trigger low foreground'),
+        ('high_temp_threshold', 80, 'Temp to trigger high foreground'),
+        ('low_foreground', '18BAEB', 'Low foreground'),
+        ('normal_foreground', 'FFDE3B', 'Normal foreground'),
+        ('high_foreground', 'FF000D', 'High foreground'),
+        ]
+
+    def __init__(self, **config):
+        config['func'] = self.get_weather
+        super().__init__(**config)
+        self.add_defaults(Weather.defaults)
+
+    def get_weather(self):
+        data = self.fetch(is_json=True)
+        conditions = rand.choice(data['weather'])['description']
+
+        tup = WeatherTuple(data['main']['temp'], conditions)
+
+        if tup.temp > self.high_temp_threshold:
+            self.foreground = self.high_foreground
+        elif tup.temp < self.low_temp_threshold:
+            self.foreground = self.low_foreground
+        else:
+            self.foreground = self.normal_foreground
+
+        return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
+                                                 conditions=tup.conditions)
 
 mod = "mod1"
 
@@ -173,6 +235,8 @@ screens = [
                 widget.MemoryGraph(),
                 widget.TextBox('Cpu:'),
                 widget.CPUGraph(),
+                widget.TextBox('Net:'),
+                widget.NetGraph(),
                 widget.TextBox('Bat:'),
                 widget.Battery(energy_now_file='charge_now',
                                energy_full_file='charge_full',
@@ -182,6 +246,10 @@ screens = [
                                format='{percent:2.0%}',
                 ),
                 widget.BatteryIcon(),
+                widget.TextBox('W:'),
+                Weather(
+                        foreground='18BAEB',
+                        ),
                 widget.Systray(),
                 widget.Clock(format='%a %b %d %H:%M:%S'),
             ],
@@ -190,6 +258,7 @@ screens = [
         bottom=bar.Bar(
             [
                 widget.GroupBox(),
+                widget.CurrentLayout(),
                 widget.Prompt(),
             ],
             24,
