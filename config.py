@@ -152,60 +152,66 @@ class GCal(widget.GenPollText):
                                          date=' '.join(line[:3]))
 
 
-mod = "mod1"
+MOD = "mod1"
+SHIFT = 'shift'
+CONTROL = 'control'
+SPACE = 'space'
+PERIOD = 'period'
+COMMA = 'comma'
+ENTER = 'Return'
 
 dmenu_font = 'sans'
 dmenu_fontsize = 16
 
 keys = [
     # Switch between windows in current stack pane
-    Key([mod], "j", lazy.layout.down()),
-    Key([mod], "k", lazy.layout.up()),
-    Key([mod], "h", lazy.layout.shrink()),
-    Key([mod], "l", lazy.layout.grow()),
+    Key([MOD], "j", lazy.layout.down()),
+    Key([MOD], "k", lazy.layout.up()),
+    Key([MOD], "h", lazy.layout.shrink()),
+    Key([MOD], "l", lazy.layout.grow()),
 
-    Key([mod], "n", lazy.layout.normalize()),
-    Key([mod], "m", lazy.layout.maximize()),
+    Key([MOD], "n", lazy.layout.normalize()),
+    Key([MOD], "m", lazy.layout.maximize()),
 
     # Move windows up or down in current stack
-    Key([mod, "shift"], "j", lazy.layout.shuffle_down()),
-    Key([mod, "shift"], "k", lazy.layout.shuffle_up()),
-    Key([mod], "Return", lazy.layout.swap_main()),
+    Key([MOD, SHIFT], "j", lazy.layout.shuffle_down()),
+    Key([MOD, SHIFT], "k", lazy.layout.shuffle_up()),
+    Key([MOD], ENTER, lazy.layout.swap_main()),
 
     # Switch window focus to other pane(s) of stack
-    #Key([mod], "space", lazy.layout.next()),
+    #Key([MOD], "space", lazy.layout.next()),
 
     # Swap panes of split stack
-    #Key([mod, "shift"], "space", lazy.layout.rotate()),
+    #Key([MOD, SHIFT], "space", lazy.layout.rotate()),
 
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
-    Key([mod, "shift"], "Return", lazy.spawn("terminator")),
-    #Key([mod], "space", lazy.spawn("terminator")),
+    Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
+    #Key([MOD], "space", lazy.spawn("terminator")),
 
     # Toggle between different layouts as defined below
-    Key([mod], "space", lazy.next_layout()),
-    Key([mod, 'shift'], "c", lazy.window.kill()),
+    Key([MOD], SPACE, lazy.next_layout()),
+    Key([MOD, SHIFT], "c", lazy.window.kill()),
 
-    Key([mod, "control"], "r", lazy.restart()),
-    Key([mod, "control"], "q", lazy.shutdown()),
-    Key([mod, "control"], "l", lazy.spawn("xscreensaver-command -lock")),
-    Key([mod], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
+    Key([MOD, CONTROL], "r", lazy.restart()),
+    Key([MOD, CONTROL], "q", lazy.shutdown()),
+    Key([MOD, CONTROL], "l", lazy.spawn("xscreensaver-command -lock")),
+    Key([MOD], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
                                                                                     fontsize=dmenu_fontsize))),
 
     # Spotify Commands
     ## NEXT
-    Key([mod, "control"], 'n', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
-    Key([mod, "control"], 'period', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
+    Key([MOD, CONTROL], 'n', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
+    Key([MOD, CONTROL], PERIOD, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
 
     ## PREV
-    Key([mod, "control"], 'p', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
-    Key([mod, "control"], 'comma', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
+    Key([MOD, CONTROL], 'p', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
+    Key([MOD, CONTROL], COMMA, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
 
     ## PAUSE
-    Key([mod, "control"], 'space', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "pause"])),
+    Key([MOD, CONTROL], SPACE, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "pause"])),
 
     ## Volume Controls
     Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
@@ -253,10 +259,10 @@ groups.extend([Group('5',
 for i in groups:
     keys.extend([
         # mod1 + letter of group = switch to group
-        Key([mod], i.name, lazy.group[i.name].toscreen()),
+        Key([MOD], i.name, lazy.group[i.name].toscreen()),
 
         # mod1 + shift + letter of group = switch to & move focused window to group
-        Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
+        Key([MOD, SHIFT], i.name, lazy.window.togroup(i.name)),
     ])
 
 layouts = [
@@ -338,11 +344,11 @@ screens = [
 
 # Drag floating layouts.
 mouse = [
-    Drag([mod], "Button1", lazy.window.set_position_floating(),
+    Drag([MOD], "Button1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
-    Drag([mod], "Button3", lazy.window.set_size_floating(),
+    Drag([MOD], "Button3", lazy.window.set_size_floating(),
          start=lazy.window.get_size()),
-    Click([mod], "Button2", lazy.window.bring_to_front())
+    Click([MOD], "Button2", lazy.window.bring_to_front())
 ]
 
 dgroups_key_binder = None
