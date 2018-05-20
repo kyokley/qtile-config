@@ -312,6 +312,7 @@ screens = [
                 widget.TextBox('W:'),
                 Weather(
                         foreground='18BAEB',
+                        update_interval=3600, # Update every hour
                         ),
                 widget.Systray(),
                 widget.Clock(format='%a %b %d %H:%M:%S'),
