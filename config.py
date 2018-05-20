@@ -28,9 +28,9 @@ import os
 import subprocess
 import random
 import requests
+import re
 
 from collections import namedtuple
-from functools import partial
 
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
@@ -42,6 +42,11 @@ except ImportError:
     pass
 
 rand = random.SystemRandom()
+
+REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
+
+VT_EXECUTABLE = os.path.join(os.path.expanduser('~'),
+                             '.pyenv/versions/vt_env/bin/vt')
 
 class ProxiedRequest(widget.GenPollText):
     defaults = [
@@ -63,7 +68,6 @@ class ProxiedRequest(widget.GenPollText):
         if is_json:
             return resp.json()
         return resp.text
-
 
 WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
 
@@ -97,6 +101,23 @@ class Weather(ProxiedRequest):
 
         return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
                                                  conditions=tup.conditions)
+
+
+class VT(widget.GenPollText):
+    def __init__(self, **config):
+        config['func'] = self.get_vt
+        super().__init__(**config)
+
+    def get_vt(self):
+        proc = subprocess.check_output([VT_EXECUTABLE, 'list', '-qu'],
+                                       env={'VT_DEFAULT_LIST': 'personal',
+                                            'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
+                                            'VT_USERNAME': 'yokley'})
+        lines = [REGEX.search(x).group().strip() for x in proc.splitlines()
+                    if x and x.strip() and REGEX.search(x) and REGEX.search(x).group().strip()]
+        return rand.choice(lines).decode('utf-8') if lines else 'No items'
+        #return rand.choice(proc.splitlines()).decode('utf-8')
+
 
 mod = "mod1"
 
@@ -237,6 +258,11 @@ screens = [
                 widget.CPUGraph(),
                 widget.TextBox('Net:'),
                 widget.NetGraph(),
+                widget.CheckUpdates(
+                               distro='Ubuntu',
+                               foreground='18BAEB',
+                               update_interval=600,
+                    ),
                 widget.TextBox('Bat:'),
                 widget.Battery(energy_now_file='charge_now',
                                energy_full_file='charge_full',
@@ -260,6 +286,9 @@ screens = [
                 widget.GroupBox(),
                 widget.CurrentLayout(),
                 widget.Prompt(),
+                widget.TextBox('VT:'),
+                VT(update_interval=10,
+                   foreground='18BAEB'),
             ],
             24,
         )
