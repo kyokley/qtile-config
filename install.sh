@@ -5,6 +5,7 @@ sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-
 pip install xcffib
 pip install cairocffi
 pip install qtile
+pip install -r requirements.txt
 
 mkdir -p ~/.config/qtile
 ln -s "$(pwd)/config.py" ~/.config/qtile/config.py

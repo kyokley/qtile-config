@@ -29,6 +29,8 @@ import subprocess
 import random
 import requests
 import re
+from datetime import datetime, timedelta
+from dateutil import tz
 
 from collections import namedtuple
 
@@ -43,10 +45,10 @@ except ImportError:
 
 rand = random.SystemRandom()
 
-REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
-
 VT_EXECUTABLE = os.path.join(os.path.expanduser('~'),
                              '.pyenv/versions/vt_env/bin/vt')
+GCAL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
+                               '.pyenv/versions/gcal_env/bin/gcalcli')
 
 class ProxiedRequest(widget.GenPollText):
     defaults = [
@@ -104,6 +106,8 @@ class Weather(ProxiedRequest):
 
 
 class VT(widget.GenPollText):
+    REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
+
     def __init__(self, **config):
         config['func'] = self.get_vt
         super().__init__(**config)
@@ -113,10 +117,39 @@ class VT(widget.GenPollText):
                                        env={'VT_DEFAULT_LIST': 'personal',
                                             'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
                                             'VT_USERNAME': 'yokley'})
-        lines = [REGEX.search(x).group().strip() for x in proc.splitlines()
-                    if x and x.strip() and REGEX.search(x) and REGEX.search(x).group().strip()]
+        lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
+                    if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
         return rand.choice(lines).decode('utf-8') if lines else 'No items'
-        #return rand.choice(proc.splitlines()).decode('utf-8')
+
+class GCal(widget.GenPollText):
+    DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
+    SPACE_REGEX = re.compile(b'\s+')
+
+    def __init__(self, **config):
+        config['func'] = self.get_cal
+        super().__init__(**config)
+
+    def get_cal(self):
+        now = datetime.now(tz=tz.gettz('America/Chicago'))
+        past_dt = now - timedelta(hours=1)
+        future_dt = now + timedelta(hours=120)
+
+        proc = subprocess.check_output([GCAL_EXECUTABLE,
+                                        '--nocolor',
+                                        '--prefix',
+                                        '%a %b %d',
+                                        'agenda',
+                                        past_dt.strftime(GCal.DATE_FORMAT),
+                                        future_dt.strftime(GCal.DATE_FORMAT),
+                                        ],
+                                       )
+        lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
+        if not lines:
+            return 'No Events'
+
+        line = rand.choice(lines).decode('utf-8').split()
+        return '{event} ({date})'.format(event=' '.join(line[3:]),
+                                         date=' '.join(line[:3]))
 
 
 mod = "mod1"
@@ -258,10 +291,14 @@ screens = [
                 widget.CPUGraph(),
                 widget.TextBox('Net:'),
                 widget.NetGraph(),
+                widget.TextBox('U:'),
                 widget.CheckUpdates(
+                               display_format='{updates}',
                                distro='Ubuntu',
                                foreground='18BAEB',
-                               update_interval=600,
+                               colour_no_updates='18BAEB',
+                               colour_have_updates='18BAEB',
+                               update_interval=3600, # Update every hour
                     ),
                 widget.TextBox('Bat:'),
                 widget.Battery(energy_now_file='charge_now',
@@ -284,11 +321,14 @@ screens = [
         bottom=bar.Bar(
             [
                 widget.GroupBox(),
-                widget.CurrentLayout(),
-                widget.Prompt(),
+                widget.CurrentLayout(width=bar.STRETCH),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
                    foreground='18BAEB'),
+                widget.TextBox('Cal:'),
+                GCal(update_interval=11,
+                     foreground='18BAEB',
+                    ),
             ],
             24,
         )
