@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Qtile
 Comment=Qtile Session
-Exec=qtile
+Exec=/home/yokley/.pyenv/versions/qtile/bin/qtile
 Type=Application
 Keywords=wm;tiling
