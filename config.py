@@ -54,6 +54,7 @@ class ProxiedRequest(widget.GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
         ('https_proxy', None, 'HTTPS proxy to use for requests'),
+        ('socks_proxy', None, 'SOCKS proxy to use for requests'),
         ]
 
     def __init__(self, **config):
@@ -105,7 +106,7 @@ class Weather(ProxiedRequest):
                                                  conditions=tup.conditions)
 
 
-class VT(widget.GenPollText):
+class VT(ProxiedRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
 
     def __init__(self, **config):
@@ -116,12 +117,13 @@ class VT(widget.GenPollText):
         proc = subprocess.check_output([VT_EXECUTABLE, 'list', '-qu'],
                                        env={'VT_DEFAULT_LIST': 'personal',
                                             'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
-                                            'VT_USERNAME': 'yokley'})
+                                            'VT_USERNAME': 'yokley',
+                                            'VT_PROXY': self.socks_proxy})
         lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
                     if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
         return rand.choice(lines).decode('utf-8') if lines else 'No items'
 
-class GCal(widget.GenPollText):
+class GCal(ProxiedRequest):
     DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
     SPACE_REGEX = re.compile(b'\s+')
 
@@ -134,15 +136,19 @@ class GCal(widget.GenPollText):
         past_dt = now - timedelta(hours=1)
         future_dt = now + timedelta(hours=120)
 
-        proc = subprocess.check_output([GCAL_EXECUTABLE,
-                                        '--nocolor',
-                                        '--prefix',
-                                        '%a %b %d',
-                                        'agenda',
-                                        past_dt.strftime(GCal.DATE_FORMAT),
-                                        future_dt.strftime(GCal.DATE_FORMAT),
-                                        ],
-                                       )
+        cmd = [GCAL_EXECUTABLE]
+        if self.https_proxy:
+            cmd.extend(['--proxy', self.https_proxy])
+
+        cmd.extend(['--nocolor',
+                    '--prefix',
+                    '%a %b %d',
+                    'agenda',
+                    past_dt.strftime(GCal.DATE_FORMAT),
+                    future_dt.strftime(GCal.DATE_FORMAT),
+                    ])
+
+        proc = subprocess.check_output(cmd)
         lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
         if not lines:
             return 'No Events'
