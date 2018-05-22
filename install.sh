@@ -2,7 +2,9 @@
 
 set -e
 
-sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0
+sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0 thunar
+
+xdg-mime default Thunar.desktop inode/directory
 
 pyenv virtualenv 3.6.2 qtile
 
