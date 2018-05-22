@@ -21,5 +21,5 @@ sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
 pyenv virtualenv 3.6.2 vt_env
 $HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/vittlify-cli.git
 
-pyenv virtualenv 3.6.2 gcal_env
+pyenv virtualenv 2.7.12 gcal_env
 $HOME/.pyenv/versions/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
