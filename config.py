@@ -118,7 +118,7 @@ class VT(ProxiedRequest):
                                        env={'VT_DEFAULT_LIST': 'personal',
                                             'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
                                             'VT_USERNAME': 'yokley',
-                                            'VT_PROXY': self.socks_proxy})
+                                            'VT_PROXY': self.socks_proxy or ''})
         lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
                     if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
         return rand.choice(lines).decode('utf-8') if lines else 'No items'
