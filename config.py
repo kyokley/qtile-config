@@ -173,8 +173,11 @@ keys = [
     # Switch between windows in current stack pane
     Key([MOD], "j", lazy.layout.down()),
     Key([MOD], "k", lazy.layout.up()),
-    Key([MOD], "h", lazy.layout.shrink()),
-    Key([MOD], "l", lazy.layout.grow()),
+    Key([MOD], "h", lazy.layout.shrink_main()),
+    Key([MOD], "l", lazy.layout.grow_main()),
+
+    Key([MOD, SHIFT], "h", lazy.layout.shrink()),
+    Key([MOD, SHIFT], "l", lazy.layout.grow()),
 
     Key([MOD], "n", lazy.layout.normalize()),
     Key([MOD], "m", lazy.layout.maximize()),
