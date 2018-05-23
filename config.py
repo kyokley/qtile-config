@@ -275,17 +275,19 @@ for i in groups:
     ])
 
 layouts = [
-    layout.MonadTall(),
-    layout.MonadWide(),
-    layout.Max(),
+    layout.MonadTall(name='Tall'),
+    layout.MonadWide(name='Wide'),
+    layout.TreeTab(name='Max'),
 ]
 
-widget_defaults = dict(
+ExtensionDefault = namedtuple('ExtensionDefault', 'font fontsize padding foreground background')
+extension_defaults = ExtensionDefault(
     font='sans',
     fontsize=12,
     padding=3,
+    foreground='AE4CFF',
+    background=None,
 )
-extension_defaults = widget_defaults.copy()
 
 screens = [
     Screen(
@@ -294,25 +296,27 @@ screens = [
                 widget.WindowName(),
                 widget.TextBox('Vol:'),
                 widget.Volume(
-                          foreground='18BAEB',
+                          foreground=extension_defaults.foreground,
                           ),
                 widget.TextBox('Disk:'),
                 widget.DF(visible_on_warn=False,
-                          foreground='18BAEB',
+                          foreground=extension_defaults.foreground,
                           format='{p}: {r:.0f}%'),
+                widget.TextBox('Busy:'),
+                widget.HDDBusyGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Mem:'),
-                widget.MemoryGraph(),
+                widget.MemoryGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Cpu:'),
-                widget.CPUGraph(),
+                widget.CPUGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Net:'),
-                widget.NetGraph(),
+                widget.NetGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('U:'),
                 widget.CheckUpdates(
                                display_format='{updates}',
                                distro='Ubuntu',
-                               foreground='18BAEB',
-                               colour_no_updates='18BAEB',
-                               colour_have_updates='18BAEB',
+                               foreground=extension_defaults.foreground,
+                               colour_no_updates=extension_defaults.foreground,
+                               colour_have_updates=extension_defaults.foreground,
                                update_interval=3600, # Update every hour
                     ),
                 widget.TextBox('Bat:'),
@@ -320,30 +324,35 @@ screens = [
                                energy_full_file='charge_full',
                                power_now_file='current_now',
                                low_percentage=.3,
-                               foreground='18BAEB',
+                               foreground=extension_defaults.foreground,
                                format='{percent:2.0%}',
                 ),
                 widget.BatteryIcon(),
                 widget.TextBox('W:'),
                 Weather(
-                        foreground='18BAEB',
+                        normal_foreground=extension_defaults.foreground,
                         update_interval=3600, # Update every hour
                         ),
                 widget.Systray(),
-                widget.Clock(format='%a %b %d %H:%M:%S'),
+                widget.Clock(
+                    foreground='FFDE3B',
+                    format='%a %b %d %H:%M:%S',
+                    ),
             ],
             24,
         ),
         bottom=bar.Bar(
             [
-                widget.GroupBox(),
+                widget.GroupBox(
+                    this_current_screen_border=extension_defaults.foreground,
+                    ),
                 widget.CurrentLayout(width=bar.STRETCH),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
-                   foreground='18BAEB'),
+                   foreground=extension_defaults.foreground),
                 widget.TextBox('Cal:'),
                 GCal(update_interval=11,
-                     foreground='18BAEB',
+                     foreground=extension_defaults.foreground,
                     ),
             ],
             24,
