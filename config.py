@@ -280,13 +280,14 @@ layouts = [
     layout.TreeTab(name='Max'),
 ]
 
-ExtensionDefault = namedtuple('ExtensionDefault', 'font fontsize padding foreground background')
+ExtensionDefault = namedtuple('ExtensionDefault', 'font fontsize padding foreground background inactive_foreground')
 extension_defaults = ExtensionDefault(
     font='sans',
     fontsize=12,
     padding=3,
     foreground='AE4CFF',
     background=None,
+    inactive_foreground='404040',
 )
 
 screens = [
@@ -345,6 +346,9 @@ screens = [
             [
                 widget.GroupBox(
                     this_current_screen_border=extension_defaults.foreground,
+                    this_screen_border=extension_defaults.inactive_foreground,
+                    other_current_screen_border=extension_defaults.foreground,
+                    other_screen_border=extension_defaults.inactive_foreground,
                     ),
                 widget.CurrentLayout(width=bar.STRETCH),
                 widget.TextBox('VT:'),
