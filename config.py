@@ -29,6 +29,8 @@ import subprocess
 import random
 import requests
 import re
+import functools
+
 from datetime import datetime, timedelta
 from dateutil import tz
 
@@ -156,6 +158,17 @@ class GCal(ProxiedRequest):
         line = rand.choice(lines).decode('utf-8').split()
         return '{event} ({date})'.format(event=' '.join(line[3:]),
                                          date=' '.join(line[:3]))
+
+class ScreenLayout(widget.CurrentLayout):
+    def setup_hooks(self):
+        def hook_layout_change(layout, group):
+            layout = self.qtile.currentGroup.layout
+            self.text = layout.name
+            self.bar.draw()
+        hook.subscribe.layout_change(hook_layout_change)
+
+        hook_screen_change = functools.partial(hook_layout_change, layout=None, group=None)
+        hook.subscribe.current_screen_change(hook_screen_change)
 
 
 MOD = "mod1"
@@ -350,7 +363,8 @@ screens = [
                     other_current_screen_border=extension_defaults.foreground,
                     other_screen_border=extension_defaults.inactive_foreground,
                     ),
-                widget.CurrentLayout(width=bar.STRETCH),
+                widget.Spacer(length=10),
+                ScreenLayout(width=bar.STRETCH),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
                    foreground=extension_defaults.foreground),
