@@ -30,6 +30,7 @@ import random
 import requests
 import re
 import functools
+import json
 
 from datetime import datetime, timedelta
 from dateutil import tz
@@ -51,6 +52,8 @@ VT_EXECUTABLE = os.path.join(os.path.expanduser('~'),
                              '.pyenv/versions/vt_env/bin/vt')
 GCAL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
                                '.pyenv/versions/gcal_env/bin/gcalcli')
+KRILL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
+                               '.pyenv/versions/krill/bin/krill++')
 
 class ProxiedRequest(widget.GenPollText):
     defaults = [
@@ -158,6 +161,48 @@ class GCal(ProxiedRequest):
         line = rand.choice(lines).decode('utf-8').split()
         return '{event} ({date})'.format(event=' '.join(line[3:]),
                                          date=' '.join(line[:3]))
+
+class Krill(ProxiedRequest):
+    defaults = [('sources_file', None, 'File containing sources'),
+                ('cache_expiration', 5, 'Length of time in minutes that cache is valid for')]
+
+    def __init__(self, **config):
+        config['func'] = self.get_krill
+        super().__init__(**config)
+        self.add_defaults(Krill.defaults)
+        self._last_update = None
+        self._data = None
+        self._current_item = None
+
+    def get_krill(self):
+        if not self.sources_file:
+            return 'No sources provided'
+
+        if (not self._last_update or
+                not self._data or
+                self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
+            print('Cache voided')
+            if self._data:
+                print('Data len: {}'.format(len(self._data)))
+
+                if self._last_update:
+                    print('Last update: {}'.format(self._last_update.isoformat()))
+                    print('Next update: {}'.format((self._last_update + timedelta(minutes=self.cache_expiration)).isoformat()))
+                print()
+            cmd = [KRILL_EXECUTABLE, '-S', os.path.expanduser(self.sources_file), '--snapshot']
+            proc = subprocess.check_output(cmd)
+            self._data = json.loads(proc)
+            self._last_update = datetime.now()
+
+        if self._data:
+            self._current_item = random.choice(self._data)
+            return self._current_item['title']
+        else:
+            return 'Could not get data'
+
+    def button_press(self, x, y, button):
+        if button == 1:
+            self.qtile.cmd_spawn('vivaldi {}'.format(self._current_item['link']))
 
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
@@ -365,6 +410,10 @@ screens = [
                     ),
                 widget.Spacer(length=10),
                 ScreenLayout(width=bar.STRETCH),
+                widget.TextBox('Krl:'),
+                Krill(foreground=extension_defaults.foreground,
+                      sources_file='~/workspace/krill_feed/sources.txt',
+                      update_interval=12),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
                    foreground=extension_defaults.foreground),
