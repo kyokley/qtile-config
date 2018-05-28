@@ -164,7 +164,7 @@ class GCal(ProxiedRequest):
 
 class Krill(ProxiedRequest):
     defaults = [('sources_file', None, 'File containing sources'),
-                ('cache_expiration', 5, 'Length of time in minutes that cache is valid for')]
+                ('cache_expiration', 10, 'Length of time in minutes that cache is valid for')]
 
     def __init__(self, **config):
         config['func'] = self.get_krill
