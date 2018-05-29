@@ -55,31 +55,41 @@ GCAL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
 KRILL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
                                '.pyenv/versions/krill/bin/krill++')
 
-class ProxiedRequest(widget.GenPollText):
+class CachedProxyRequest(widget.GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
         ('https_proxy', None, 'HTTPS proxy to use for requests'),
         ('socks_proxy', None, 'SOCKS proxy to use for requests'),
+        ('cache_expiration', 5, 'Length of time in minutes that cache is valid for')
         ]
 
     def __init__(self, **config):
         super().__init__(**config)
-        self.add_defaults(ProxiedRequest.defaults)
+        self.add_defaults(CachedProxyRequest.defaults)
+        self._last_update = None
+        self._cached_data = None
 
-    def fetch(self, is_json=True):
+    def cached_fetch(self):
+        if (not self._cached_data or
+                not self._last_update or
+                self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
+            self._cached_data = self._fetch()
+            self._last_update = datetime.now()
+
+        return self._cached_data
+
+    def _fetch(self):
         proxies = {'http': self.http_proxy,
                    'https': self.https_proxy,
                    }
         resp = requests.get(self.URL, proxies=proxies)
         resp.raise_for_status()
 
-        if is_json:
-            return resp.json()
-        return resp.text
+        return resp.json()
 
 WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
 
-class Weather(ProxiedRequest):
+class Weather(CachedProxyRequest):
     URL = 'http://api.openweathermap.org/data/2.5/weather?id=4887398&units=imperial&appid=c4f4551816bd45b67708bea102d93522'
     defaults = [
         ('low_temp_threshold', 45, 'Temp to trigger low foreground'),
@@ -95,7 +105,7 @@ class Weather(ProxiedRequest):
         self.add_defaults(Weather.defaults)
 
     def get_weather(self):
-        data = self.fetch(is_json=True)
+        data = self.cached_fetch()
         conditions = rand.choice(data['weather'])['description']
 
         tup = WeatherTuple(data['main']['temp'], conditions)
@@ -110,8 +120,7 @@ class Weather(ProxiedRequest):
         return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
                                                  conditions=tup.conditions)
 
-
-class VT(ProxiedRequest):
+class VT(CachedProxyRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
 
     def __init__(self, **config):
@@ -119,6 +128,10 @@ class VT(ProxiedRequest):
         super().__init__(**config)
 
     def get_vt(self):
+        data = self.cached_fetch()
+        return rand.choice(data).decode('utf-8') if data else 'No items'
+
+    def _fetch(self):
         proc = subprocess.check_output([VT_EXECUTABLE, 'list', '-qu'],
                                        env={'VT_DEFAULT_LIST': 'personal',
                                             'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
@@ -126,9 +139,9 @@ class VT(ProxiedRequest):
                                             'VT_PROXY': self.socks_proxy or ''})
         lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
                     if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
-        return rand.choice(lines).decode('utf-8') if lines else 'No items'
+        return lines
 
-class GCal(ProxiedRequest):
+class GCal(CachedProxyRequest):
     DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
     SPACE_REGEX = re.compile(b'\s+')
 
@@ -137,6 +150,15 @@ class GCal(ProxiedRequest):
         super().__init__(**config)
 
     def get_cal(self):
+        lines = self.cached_fetch()
+
+        if not lines:
+            return 'No Events'
+        line = rand.choice(lines).decode('utf-8').split()
+        return '{event} ({date})'.format(event=' '.join(line[3:]),
+                                         date=' '.join(line[:3]))
+
+    def _fetch(self):
         now = datetime.now(tz=tz.gettz('America/Chicago'))
         past_dt = now - timedelta(hours=1)
         future_dt = now + timedelta(hours=120)
@@ -155,50 +177,34 @@ class GCal(ProxiedRequest):
 
         proc = subprocess.check_output(cmd)
         lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
-        if not lines:
-            return 'No Events'
 
-        line = rand.choice(lines).decode('utf-8').split()
-        return '{event} ({date})'.format(event=' '.join(line[3:]),
-                                         date=' '.join(line[:3]))
+        return lines
 
-class Krill(ProxiedRequest):
+class Krill(CachedProxyRequest):
     defaults = [('sources_file', None, 'File containing sources'),
-                ('cache_expiration', 10, 'Length of time in minutes that cache is valid for')]
+                ]
 
     def __init__(self, **config):
         config['func'] = self.get_krill
         super().__init__(**config)
         self.add_defaults(Krill.defaults)
-        self._last_update = None
-        self._data = None
         self._current_item = None
 
     def get_krill(self):
         if not self.sources_file:
             return 'No sources provided'
 
-        if (not self._last_update or
-                not self._data or
-                self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
-            print('Cache voided')
-            if self._data:
-                print('Data len: {}'.format(len(self._data)))
+        data = self.cached_fetch()
+        if not data:
+            return 'Could not load data from sources'
 
-                if self._last_update:
-                    print('Last update: {}'.format(self._last_update.isoformat()))
-                    print('Next update: {}'.format((self._last_update + timedelta(minutes=self.cache_expiration)).isoformat()))
-                print()
-            cmd = [KRILL_EXECUTABLE, '-S', os.path.expanduser(self.sources_file), '--snapshot']
-            proc = subprocess.check_output(cmd)
-            self._data = json.loads(proc)
-            self._last_update = datetime.now()
+        self._current_item = rand.choice(data)
+        return self._current_item['title']
 
-        if self._data:
-            self._current_item = random.choice(self._data)
-            return self._current_item['title']
-        else:
-            return 'Could not get data'
+    def _fetch(self):
+        cmd = [KRILL_EXECUTABLE, '-S', os.path.expanduser(self.sources_file), '--snapshot']
+        proc = subprocess.check_output(cmd)
+        return json.loads(proc)
 
     def button_press(self, x, y, button):
         if button == 1:
