@@ -144,9 +144,11 @@ class VT(CachedProxyRequest):
                                             'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
                                             'VT_USERNAME': 'yokley',
                                             'VT_PROXY': self.socks_proxy or ''})
-        lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
-                    if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
-        return lines
+        if proc:
+            lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
+                        if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
+            return lines
+        return [b'Failed to load']
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
@@ -206,9 +208,10 @@ class GCal(CachedProxyRequest):
                     ])
 
         proc = subprocess.check_output(cmd)
-        lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
-
-        return lines
+        if proc:
+            lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
+            return lines
+        return ['Failed to load']
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
@@ -252,7 +255,9 @@ class Krill(CachedProxyRequest):
         proc = subprocess.check_output(cmd,
                                        env={'http_proxy': self.http_proxy or '',
                                             'https_proxy': self.https_proxy or ''})
-        return json.loads(proc)
+        if proc:
+            return json.loads(proc)
+        return ['Failed to load']
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
