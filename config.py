@@ -135,7 +135,7 @@ class VT(CachedProxyRequest):
 
     def get_vt(self):
         self._data = self.cached_fetch()
-        self._current_item = rand.choice(self._data) if self._data else 'No items'
+        self._current_item = rand.choice(self._data) if self._data else b'No items'
         return self._current_item.decode('utf-8')
 
     def _fetch(self):
@@ -249,7 +249,9 @@ class Krill(CachedProxyRequest):
 
     def _fetch(self):
         cmd = [KRILL_EXECUTABLE, '-S', os.path.expanduser(self.sources_file), '--snapshot']
-        proc = subprocess.check_output(cmd)
+        proc = subprocess.check_output(cmd,
+                                       env={'http_proxy': self.http_proxy or '',
+                                            'https_proxy': self.https_proxy or ''})
         return json.loads(proc)
 
     def button_press(self, x, y, button):
