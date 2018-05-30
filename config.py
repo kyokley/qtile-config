@@ -55,6 +55,11 @@ GCAL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
 KRILL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
                                '.pyenv/versions/krill/bin/krill++')
 
+BUTTON_UP = 4
+BUTTON_DOWN = 5
+BUTTON_LEFT = 1
+BUTTON_RIGHT = 3
+
 class CachedProxyRequest(widget.GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
@@ -126,10 +131,12 @@ class VT(CachedProxyRequest):
     def __init__(self, **config):
         config['func'] = self.get_vt
         super().__init__(**config)
+        self._current_item = None
 
     def get_vt(self):
-        data = self.cached_fetch()
-        return rand.choice(data).decode('utf-8') if data else 'No items'
+        self._data = self.cached_fetch()
+        self._current_item = rand.choice(self._data) if self._data else 'No items'
+        return self._current_item.decode('utf-8')
 
     def _fetch(self):
         proc = subprocess.check_output([VT_EXECUTABLE, 'list', '-qu'],
@@ -141,6 +148,23 @@ class VT(CachedProxyRequest):
                     if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
         return lines
 
+    def button_press(self, x, y, button):
+        if button == BUTTON_LEFT:
+            self.get_vt()
+        elif button in (BUTTON_UP, BUTTON_DOWN):
+            if self._data and self._current_item in self._data:
+                if button == BUTTON_UP:
+                    idx = self._data.index(self._current_item) + 1
+                else:
+                    idx = self._data.index(self._current_item) - 1
+                self._current_item = self._data[idx % len(self._data)]
+                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
+            else:
+                return
+
+        self.update(self._current_item.decode('utf-8'))
+
+
 class GCal(CachedProxyRequest):
     DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
     SPACE_REGEX = re.compile(b'\s+')
@@ -148,13 +172,19 @@ class GCal(CachedProxyRequest):
     def __init__(self, **config):
         config['func'] = self.get_cal
         super().__init__(**config)
+        self._current_item = None
 
     def get_cal(self):
-        lines = self.cached_fetch()
+        self._data = self.cached_fetch()
 
-        if not lines:
+        if not self._data:
             return 'No Events'
-        line = rand.choice(lines).decode('utf-8').split()
+
+        self._current_item = rand.choice(self._data) # .decode('utf-8').split()
+        return self._format_line(self._current_item)
+
+    def _format_line(self, line):
+        line = line.decode('utf-8').split()
         return '{event} ({date})'.format(event=' '.join(line[3:]),
                                          date=' '.join(line[:3]))
 
@@ -180,6 +210,22 @@ class GCal(CachedProxyRequest):
 
         return lines
 
+    def button_press(self, x, y, button):
+        if button == BUTTON_LEFT:
+            self.get_cal()
+        elif button in (BUTTON_UP, BUTTON_DOWN):
+            if self._data:
+                if button == BUTTON_UP:
+                    idx = self._data.index(self._current_item) + 1
+                else:
+                    idx = self._data.index(self._current_item) - 1
+                self._current_item = self._data[idx % len(self._data)]
+                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
+            else:
+                return
+        self.update(self._format_line(self._current_item))
+
+
 class Krill(CachedProxyRequest):
     defaults = [('sources_file', None, 'File containing sources'),
                 ]
@@ -194,11 +240,11 @@ class Krill(CachedProxyRequest):
         if not self.sources_file:
             return 'No sources provided'
 
-        data = self.cached_fetch()
-        if not data:
+        self._data = self.cached_fetch()
+        if not self._data:
             return 'Could not load data from sources'
 
-        self._current_item = rand.choice(data)
+        self._current_item = rand.choice(self._data)
         return self._current_item['title']
 
     def _fetch(self):
@@ -207,8 +253,17 @@ class Krill(CachedProxyRequest):
         return json.loads(proc)
 
     def button_press(self, x, y, button):
-        if button == 1:
+        if button == BUTTON_LEFT:
             self.qtile.cmd_spawn('vivaldi {}'.format(self._current_item['link']))
+        elif button in (BUTTON_UP, BUTTON_DOWN):
+            if self._data:
+                if button == BUTTON_UP:
+                    idx = self._data.index(self._current_item) + 1
+                else:
+                    idx = self._data.index(self._current_item) - 1
+                self._current_item = self._data[idx % len(self._data)]
+                self.update(self._current_item['title'])
+                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
 
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
