@@ -92,6 +92,10 @@ class CachedProxyRequest(widget.GenPollText):
 
         return resp.json()
 
+    def clear_cache(self):
+        self._last_update = None
+        self._cached_data = None
+
 WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
 
 class Weather(CachedProxyRequest):
@@ -124,6 +128,13 @@ class Weather(CachedProxyRequest):
 
         return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
                                                  conditions=tup.conditions)
+
+    def button_press(self, x, y, button):
+        if button == BUTTON_LEFT:
+            self.clear_cache()
+            weather = self.get_weather()
+
+            self.update(weather)
 
 class VT(CachedProxyRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
