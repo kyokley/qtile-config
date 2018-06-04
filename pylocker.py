@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# vim:ts=2:sw=2:expandtab
+
+# Most of what is below has been taken from a gist by Airblader
+# https://gist.github.com/Airblader/3a96a407e16dae155744
 
 import os
 import xcffib
@@ -8,6 +10,14 @@ from xcffib.xproto import *
 from PIL import Image
 
 XCB_MAP_STATE_VIEWABLE = 2
+
+class Color(object):
+    BLANK = '#00000000'  # blank
+    CLEARISH = '#ffffff22'  # clear ish
+    DEFAULT = '#ff00ffcc'  # default
+    TEXT = '#ee00eeee'  # text
+    WRONG = '#880000bb'  # wrong
+    VERIFYING = '#bb00bbbb'  # verifying
 
 def screenshot():
     os.system('import -window root /tmp/.i3lock.png')
@@ -62,7 +72,38 @@ def obscure(rects):
     image.save('/tmp/.i3lock.png')
 
 def lock_screen():
-    os.system('i3lock -d -u -i /tmp/.i3lock.png')
+    os.system('''i3lock -i /tmp/.i3lock.png \
+                    --insidevercolor={clearish}   \
+                    --ringvercolor={verifying}     \
+                    \
+                    --insidewrongcolor={clearish} \
+                    --ringwrongcolor={wrong}   \
+                    \
+                    --insidecolor={blank}      \
+                    --ringcolor={default}        \
+                    --linecolor={blank}        \
+                    --separatorcolor={default}   \
+                    \
+                    --verifcolor={text}        \
+                    --wrongcolor={text}        \
+                    --timecolor={text}        \
+                    --datecolor={text}        \
+                    --layoutcolor={text}      \
+                    --keyhlcolor={wrong}       \
+                    --bshlcolor={wrong}        \
+                    \
+                    --clock               \
+                    --indicator           \
+                    --timestr="%H:%M:%S"  \
+                    --datestr="" \
+                    --wrongtext="FAIL" \
+                '''.format(blank=Color.BLANK,
+                           clearish=Color.CLEARISH,
+                           default=Color.DEFAULT,
+                           text=Color.TEXT,
+                           wrong=Color.WRONG,
+                           verifying=Color.VERIFYING,
+                           ))
 
 if __name__ == '__main__':
     # 1: Take a screenshot.
