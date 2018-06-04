@@ -2,7 +2,7 @@
 
 set -e
 
-sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0 thunar
+sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0 thunar i3lock
 
 xdg-mime default Thunar.desktop inode/directory
 
@@ -15,9 +15,8 @@ $HOME/.pyenv/versions/qtile/bin/pip install cairocffi
 $HOME/.pyenv/versions/qtile/bin/pip install qtile
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
-mkdir -p ~/.config/qtile
-ln -s "$(pwd)/config.py" ~/.config/qtile/config.py
-ln -s "$(pwd)/autostart.sh" ~/.config/qtile/autostart.sh
+ln -s "$(pwd)" ~/.config/qtile
+
 sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
 
 pyenv virtualenv 3.6.2 vt_env

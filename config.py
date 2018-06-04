@@ -343,7 +343,7 @@ keys = [
 
     Key([MOD, CONTROL], "r", lazy.restart()),
     Key([MOD, CONTROL], "q", lazy.shutdown()),
-    Key([MOD, CONTROL], "l", lazy.spawn("xscreensaver-command -lock")),
+    Key([MOD, CONTROL], "l", lazy.spawn([os.path.expanduser('~/.pyenv/versions/qtile/bin/python'), os.path.expanduser('~/.config/qtile/pylocker.py')])),
     Key([MOD], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
                                                                                     fontsize=dmenu_fontsize))),
 
