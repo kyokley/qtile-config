@@ -62,7 +62,7 @@ def obscure(rects):
     image.save('/tmp/.i3lock.png')
 
 def lock_screen():
-    os.system('i3lock -i /tmp/.i3lock.png')
+    os.system('i3lock -d -u -i /tmp/.i3lock.png')
 
 if __name__ == '__main__':
     # 1: Take a screenshot.
