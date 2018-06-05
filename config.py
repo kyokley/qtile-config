@@ -343,7 +343,7 @@ keys = [
 
     Key([MOD, CONTROL], "r", lazy.restart()),
     Key([MOD, CONTROL], "q", lazy.shutdown()),
-    Key([MOD, CONTROL], "l", lazy.spawn([os.path.expanduser('~/.pyenv/versions/qtile/bin/python'), os.path.expanduser('~/.config/qtile/pylocker.py')])),
+    Key([MOD, CONTROL], "l", lazy.spawn([os.path.expanduser('~/.config/qtile/force_lock.sh')])),
     Key([MOD], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
                                                                                     fontsize=dmenu_fontsize))),
 
@@ -412,8 +412,8 @@ for i in groups:
     ])
 
 layouts = [
-    layout.MonadTall(name='Tall'),
-    layout.MonadWide(name='Wide'),
+    layout.MonadTall(name='Tall', new_at_current=True),
+    layout.MonadWide(name='Wide', new_at_current=True),
     layout.TreeTab(name='Max'),
 ]
 
