@@ -48,12 +48,9 @@ except ImportError:
 
 rand = random.SystemRandom()
 
-VT_EXECUTABLE = os.path.join(os.path.expanduser('~'),
-                             '.pyenv/versions/vt_env/bin/vt')
-GCAL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
-                               '.pyenv/versions/gcal_env/bin/gcalcli')
-KRILL_EXECUTABLE = os.path.join(os.path.expanduser('~'),
-                               '.pyenv/versions/krill/bin/krill++')
+VT_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/vt_env/bin/vt')
+GCAL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/gcal_env/bin/gcalcli')
+KRILL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/krill/bin/krill++')
 
 BUTTON_UP = 4
 BUTTON_DOWN = 5
@@ -308,8 +305,8 @@ dmenu_fontsize = 16
 
 keys = [
     # Switch between windows in current stack pane
-    Key([MOD], "j", lazy.layout.down()),
-    Key([MOD], "k", lazy.layout.up()),
+    Key([MOD], "j", lazy.layout.next()),
+    Key([MOD], "k", lazy.layout.previous()),
     Key([MOD], "h", lazy.layout.shrink_main()),
     Key([MOD], "l", lazy.layout.grow_main()),
 
@@ -323,6 +320,9 @@ keys = [
     Key([MOD, SHIFT], "j", lazy.layout.shuffle_down()),
     Key([MOD, SHIFT], "k", lazy.layout.shuffle_up()),
     Key([MOD], ENTER, lazy.layout.swap_main()),
+
+    # Floating
+    Key([MOD], "t", lazy.window.toggle_floating()),
 
     # Switch window focus to other pane(s) of stack
     #Key([MOD], "space", lazy.layout.next()),
