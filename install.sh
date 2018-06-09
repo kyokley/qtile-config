@@ -29,7 +29,7 @@ $HOME/.pyenv/versions/gcal_env/bin/pip install git+https://github.com/kyokley/gc
 cur_dir="$(pwd)"
 git clone https://github.com/PandorasFox/i3lock-color.git /tmp/i3lock-color
 cd /tmp/i3lock-color
-sudo aptitude install -y libev-dev libxcb-composite0 libxcb-composite0-dev libxcb-xinerama0 libxcb-randr0 libxcb-xinerama0-dev libxcb-xkb-dev libxcb-image0-dev libxcb-util-dev libxkbcommon-x11-dev libjpeg-turbo8-dev libpam0g-dev
+sudo aptitude install -y libev-dev libxcb-composite0 libxcb-composite0-dev libxcb-xinerama0 libxcb-randr0 libxcb-xinerama0-dev libxcb-xkb-dev libxcb-image0-dev libxcb-util-dev libxkbcommon-x11-dev libjpeg-turbo8-dev libpam0g-dev libxcb-randr0-dev libxkbcommon-dev
 autoreconf -i && ./configure && make && sudo make install
 cd "$cur_dir"
 rm -rf /tmp/i3lock-color
