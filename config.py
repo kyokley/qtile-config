@@ -492,7 +492,7 @@ screens = [
                 widget.TextBox('Krl:'),
                 Krill(foreground=extension_defaults.foreground,
                       sources_file='~/workspace/krill_feed/sources.txt',
-                      update_interval=12),
+                      update_interval=21),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
                    foreground=extension_defaults.foreground),
