@@ -4,7 +4,8 @@
 # Most of what is below has been taken from a gist by Airblader
 # https://gist.github.com/Airblader/3a96a407e16dae155744
 
-import os
+import subprocess # nosec
+import shlex
 import xcffib
 from xcffib.xproto import *
 from PIL import Image
@@ -20,7 +21,8 @@ class Color(object):
     VERIFYING = '#bb00bbbb'  # verifying
 
 def screenshot():
-    os.system('import -window root /tmp/.i3lock.png')
+    args = shlex.split('import -window root /tmp/.i3lock.png') # nosec
+    subprocess.run(args)
 
 def xcb_fetch_windows():
     """ Returns an array of rects of currently visible windows. """
@@ -56,7 +58,7 @@ def obscure_image(image):
 
 def obscure(rects):
     """ Takes an array of rects to obscure from the screenshot. """
-    image = Image.open('/tmp/.i3lock.png')
+    image = Image.open('/tmp/.i3lock.png') # nosec
 
     for rect in rects:
         area = (
@@ -69,51 +71,63 @@ def obscure(rects):
         cropped = obscure_image(cropped)
         image.paste(cropped, area)
 
-    image.save('/tmp/.i3lock.png')
+    image.save('/tmp/.i3lock.png') # nosec
 
-def lock_screen():
-    os.system('''i3lock -i /tmp/.i3lock.png \
-                    --insidevercolor={clearish}   \
-                    --ringvercolor={verifying}     \
-                    \
-                    --insidewrongcolor={clearish} \
-                    --ringwrongcolor={wrong}   \
-                    \
-                    --insidecolor={blank}      \
-                    --ringcolor={default}        \
-                    --linecolor={blank}        \
-                    --separatorcolor={default}   \
-                    \
-                    --verifcolor={text}        \
-                    --wrongcolor={text}        \
-                    --timecolor={text}        \
-                    --datecolor={text}        \
-                    --layoutcolor={text}      \
-                    --keyhlcolor={wrong}       \
-                    --bshlcolor={wrong}        \
-                    \
-                    --clock               \
-                    --indicator           \
-                    --timestr="%H:%M:%S"  \
-                    --datestr="" \
-                    --wrongtext="FAIL" \
-                '''.format(blank=Color.BLANK,
-                           clearish=Color.CLEARISH,
-                           default=Color.DEFAULT,
-                           text=Color.TEXT,
-                           wrong=Color.WRONG,
-                           verifying=Color.VERIFYING,
-                           ))
+def lock_screen(blur=False):
+    cmd = ['i3lock']
 
-if __name__ == '__main__':
-    # 1: Take a screenshot.
-    screenshot()
+    if blur:
+        cmd.extend(['--blur=5'])
+    else:
+        cmd.extend(['-i', '/tmp/.i3lock.png']) # nosec
 
-    # 2: Get the visible windows.
-    rects = xcb_fetch_windows()
+    args = shlex.split('''--insidevercolor={clearish}   \
+                          --ringvercolor={verifying}     \
+                          \
+                          --insidewrongcolor={clearish} \
+                          --ringwrongcolor={wrong}   \
+                          \
+                          --insidecolor={blank}      \
+                          --ringcolor={default}        \
+                          --linecolor={blank}        \
+                          --separatorcolor={default}   \
+                          \
+                          --verifcolor={text}        \
+                          --wrongcolor={text}        \
+                          --timecolor={text}        \
+                          --datecolor={text}        \
+                          --layoutcolor={text}      \
+                          --keyhlcolor={wrong}       \
+                          --bshlcolor={wrong}        \
+                          \
+                          --clock               \
+                          --indicator           \
+                          --timestr="%H:%M:%S"  \
+                          --datestr="" \
+                          --wrongtext="FAIL" \
+                       '''.format(blank=Color.BLANK,
+                                  clearish=Color.CLEARISH,
+                                  default=Color.DEFAULT,
+                                  text=Color.TEXT,
+                                  wrong=Color.WRONG,
+                                  verifying=Color.VERIFYING,
+                                  ))
+    cmd.extend(args)
+    subprocess.run(cmd)
 
-    # 3: Process the screenshot.
-    obscure(rects)
+def main(blur=False):
+    if not blur:
+        # 1: Take a screenshot.
+        screenshot()
+
+        # 2: Get the visible windows.
+        rects = xcb_fetch_windows()
+
+        # 3: Process the screenshot.
+        obscure(rects)
 
     # 4: Lock the screen
-    lock_screen()
+    lock_screen(blur=blur)
+
+if __name__ == '__main__':
+    main(blur=False)
