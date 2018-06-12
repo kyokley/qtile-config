@@ -7,6 +7,7 @@
 import subprocess # nosec
 import shlex
 import xcffib
+import random
 from xcffib.xproto import *
 from PIL import Image
 
@@ -130,4 +131,4 @@ def main(blur=False):
     lock_screen(blur=blur)
 
 if __name__ == '__main__':
-    main(blur=False)
+    main(blur=random.choice([True, False])) # nosec
