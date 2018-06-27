@@ -8,10 +8,15 @@ import subprocess # nosec
 import shlex
 import xcffib
 import random
+import threading
+import time
+
 from xcffib.xproto import *
 from PIL import Image
 
 XCB_MAP_STATE_VIEWABLE = 2
+SCREEN_SLEEP = 10 # in minutes
+DPMS_CHECK = 10 # in seconds
 
 class Color(object):
     BLANK = '#00000000'  # blank
@@ -74,7 +79,7 @@ def obscure(rects):
 
     image.save('/tmp/.i3lock.png') # nosec
 
-def lock_screen(blur=False):
+def lock_screen(event, blur=False):
     cmd = ['i3lock']
 
     if blur:
@@ -106,6 +111,8 @@ def lock_screen(blur=False):
                           --timestr="%H:%M:%S"  \
                           --datestr="" \
                           --wrongtext="FAIL" \
+                          --show-failed-attempts \
+                          --nofork
                        '''.format(blank=Color.BLANK,
                                   clearish=Color.CLEARISH,
                                   default=Color.DEFAULT,
@@ -115,6 +122,25 @@ def lock_screen(blur=False):
                                   ))
     cmd.extend(args)
     subprocess.run(cmd)
+    event.set()
+
+def handle_power_settings():
+    done_event = threading.Event()
+
+    dpms_thread = threading.Thread(target=_force_screen_off,
+                                   args=(done_event,))
+    dpms_thread.start()
+    return done_event
+
+def _force_screen_off(event):
+    count = 0
+    while not event.is_set():
+        count += 1
+
+        if (count * DPMS_CHECK) % (SCREEN_SLEEP * 60) == 0:
+            count = 0
+            subprocess.run(shlex.split('xset dpms force off'))
+        time.sleep(DPMS_CHECK)
 
 def main(blur=False):
     if not blur:
@@ -128,7 +154,8 @@ def main(blur=False):
         obscure(rects)
 
     # 4: Lock the screen
-    lock_screen(blur=blur)
+    event = handle_power_settings()
+    lock_screen(event, blur=blur)
 
 if __name__ == '__main__':
     main(blur=random.choice([True, False])) # nosec
