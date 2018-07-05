@@ -31,6 +31,7 @@ import requests
 import re
 import functools
 import json
+import multiprocessing
 
 from datetime import datetime, timedelta
 from dateutil import tz
@@ -291,6 +292,53 @@ class ScreenLayout(widget.CurrentLayout):
         hook_screen_change = functools.partial(hook_layout_change, layout=None, group=None)
         hook.subscribe.current_screen_change(hook_screen_change)
 
+class MaxCPUGraph(widget.CPUGraph):
+    def __init__(self, **config):
+        self._num_cores = multiprocessing.cpu_count()
+        widget.CPUGraph.__init__(self, **config)
+        self.oldvalues = self._getvalues()
+
+    def _getvalues(self):
+        proc = '/proc/stat'
+
+        with open(proc) as file:
+            file.readline()
+            lines = file.readlines()
+
+        vals = [line.split(None, 6)[1:5] for line in lines[:self._num_cores]]
+        return [map(int, val) for val in vals]
+
+    def update_graph(self):
+        new_values = self._getvalues()
+        old_values = self.oldvalues
+
+        max_percent = 0
+        for old, new in zip(old_values, new_values):
+            try:
+                old_user, new_user = next(old), next(new)
+                old_nice, new_nice = next(old), next(new)
+                old_sys, new_sys = next(old), next(new)
+                old_idle, new_idle = next(old), next(new)
+            except StopIteration:
+                continue
+
+            busy = (new_user + new_nice + new_sys
+                        - old_user - old_nice - old_sys)
+            total = busy + new_idle - old_idle
+
+            if total:
+                percent = float(busy) / total * 100
+            else:
+                percent = 0
+
+            max_percent = max(max_percent, percent)
+
+        self.oldvalues = new_values
+
+        if max_percent:
+            print(max_percent)
+            self.push(max_percent)
+
 
 MOD = "mod1"
 SHIFT = 'shift'
@@ -445,7 +493,7 @@ screens = [
                 widget.TextBox('Mem:'),
                 widget.MemoryGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Cpu:'),
-                widget.CPUGraph(graph_color=extension_defaults.foreground),
+                MaxCPUGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Net:'),
                 widget.NetGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('U:'),
