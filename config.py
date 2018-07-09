@@ -478,7 +478,7 @@ screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.WindowName(),
+                widget.WindowName(for_current_screen=True),
                 widget.TextBox('Vol:'),
                 widget.Volume(
                           foreground=extension_defaults.foreground,
