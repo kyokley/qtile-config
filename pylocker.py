@@ -10,6 +10,8 @@ import xcffib
 import random
 import threading
 import time
+import os
+import sys
 
 from xcffib.xproto import *
 from PIL import Image
@@ -17,6 +19,8 @@ from PIL import Image
 XCB_MAP_STATE_VIEWABLE = 2
 SCREEN_SLEEP = 10 # in minutes
 DPMS_CHECK = 10 # in seconds
+
+FILE_LOCK_PATH = '/tmp/pylock.pid'
 
 class Color(object):
     BLANK = '#00000000'  # blank
@@ -142,7 +146,22 @@ def _force_screen_off(event):
             subprocess.run(shlex.split('xset dpms force off'))
         time.sleep(DPMS_CHECK)
 
+def _create_pid_file():
+    if os.path.exists(FILE_LOCK_PATH):
+        return False
+    else:
+        with open(FILE_LOCK_PATH, 'w') as f:
+            f.write(str(os.getpid()))
+
+        return True
+
 def main(blur=False):
+    got_lock = _create_pid_file()
+
+    if not got_lock:
+        print('Could not get file lock! Aborting')
+        sys.exit(1)
+
     if not blur:
         # 1: Take a screenshot.
         screenshot()
@@ -156,6 +175,8 @@ def main(blur=False):
     # 4: Lock the screen
     event = handle_power_settings()
     lock_screen(event, blur=blur)
+
+    os.remove(FILE_LOCK_PATH)
 
 if __name__ == '__main__':
     main(blur=random.choice([True, False])) # nosec
