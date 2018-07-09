@@ -336,7 +336,6 @@ class MaxCPUGraph(widget.CPUGraph):
         self.oldvalues = new_values
 
         if max_percent:
-            print(max_percent)
             self.push(max_percent)
 
 
