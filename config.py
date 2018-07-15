@@ -71,14 +71,20 @@ class CachedProxyRequest(widget.GenPollText):
         self.add_defaults(CachedProxyRequest.defaults)
         self._last_update = None
         self._cached_data = None
+        self._locked = False
 
     def cached_fetch(self):
+        if self._locked:
+            return self._cached_data
+
+        self._locked = True
         if (not self._cached_data or
                 not self._last_update or
                 self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
             self._cached_data = self._fetch()
             self._last_update = datetime.now()
 
+        self._locked = False
         return self._cached_data
 
     def _fetch(self):
