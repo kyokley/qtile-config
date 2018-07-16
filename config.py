@@ -253,6 +253,7 @@ class Krill(CachedProxyRequest):
         super().__init__(**config)
         self.add_defaults(Krill.defaults)
         self._current_item = None
+        self._last_item_change_time = None
 
     def get_krill(self):
         if not self.sources_file:
@@ -262,7 +263,10 @@ class Krill(CachedProxyRequest):
         if not self._data:
             return 'Could not load data from sources'
 
-        self._current_item = rand.choice(self._data)
+        if (not self._last_item_change_time or
+                self._last_item_change_time  + timedelta(seconds=self.update_interval) < datetime.now()):
+            self._current_item = rand.choice(self._data)
+            self._last_item_change_time = datetime.now()
         return self._current_item['title']
 
     def _fetch(self):
@@ -285,7 +289,7 @@ class Krill(CachedProxyRequest):
                     idx = self._data.index(self._current_item) - 1
                 self._current_item = self._data[idx % len(self._data)]
                 self.update(self._current_item['title'])
-                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
+                self._last_item_change_time = datetime.now() + timedelta(seconds=self.update_interval)
 
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
