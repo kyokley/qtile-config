@@ -513,6 +513,7 @@ screens = [
                                colour_no_updates=extension_defaults.foreground,
                                colour_have_updates=extension_defaults.foreground,
                                update_interval=3600, # Update every hour
+                               restart_indicator='*',
                     ),
                 widget.TextBox('Bat:'),
                 widget.Battery(energy_now_file='charge_now',
