@@ -231,6 +231,8 @@ class GCal(CachedProxyRequest):
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
             self.get_cal()
+        elif button == BUTTON_RIGHT:
+            self.clear_cache()
         elif button in (BUTTON_UP, BUTTON_DOWN):
             if self._data:
                 if button == BUTTON_UP:
