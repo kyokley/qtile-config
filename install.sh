@@ -2,7 +2,7 @@
 
 set -e
 
-sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0 thunar
+sudo aptitude install libxcb-render0-dev libffi-dev libcairo2-dev libpangocairo-1.0-0 thunar dmenu
 
 xdg-mime default Thunar.desktop inode/directory
 
