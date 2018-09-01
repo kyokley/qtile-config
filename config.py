@@ -63,7 +63,8 @@ class CachedProxyRequest(widget.GenPollText):
         ('http_proxy', None, 'HTTP proxy to use for requests'),
         ('https_proxy', None, 'HTTPS proxy to use for requests'),
         ('socks_proxy', None, 'SOCKS proxy to use for requests'),
-        ('cache_expiration', 5, 'Length of time in minutes that cache is valid for')
+        ('cache_expiration', 5, 'Length of time in minutes that cache is valid for'),
+        ('debug', False, 'Enable additional debugging'),
         ]
 
     def __init__(self, **config):
@@ -73,19 +74,31 @@ class CachedProxyRequest(widget.GenPollText):
         self._cached_data = None
         self._locked = False
 
+    def _print(self, msg):
+        if self.debug:
+            print('{}: {}'.format(self.__class__, msg))
+
     def cached_fetch(self):
         if self._locked:
+            self._print('Instance locked. Returning cached data')
             return self._cached_data
 
-        self._locked = True
-        if (not self._cached_data or
-                not self._last_update or
-                self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
-            self._cached_data = self._fetch()
-            self._last_update = datetime.now()
-
-        self._locked = False
-        return self._cached_data
+        try:
+            self._print('Setting lock')
+            self._locked = True
+            if (not self._cached_data or
+                    not self._last_update or
+                    self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
+                self._print('Getting data')
+                self._cached_data = self._fetch()
+                self._last_update = datetime.now()
+        except Exception as e:
+            self._print('Got error')
+            self._print(str(e))
+        finally:
+            self._print('Releasing lock')
+            self._locked = False
+            return self._cached_data
 
     def _fetch(self):
         proxies = {'http': self.http_proxy,
@@ -223,10 +236,10 @@ class GCal(CachedProxyRequest):
                     ])
 
         proc = subprocess.check_output(cmd)
+
         if proc:
             lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
             return lines
-        return ['Failed to load']
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
@@ -559,6 +572,7 @@ screens = [
                 widget.TextBox('Cal:'),
                 GCal(update_interval=11,
                      foreground=extension_defaults.foreground,
+                     debug=False,
                     ),
             ],
             24,
