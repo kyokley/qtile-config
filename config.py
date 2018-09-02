@@ -199,10 +199,17 @@ class GCal(CachedProxyRequest):
     DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
     SPACE_REGEX = re.compile(b'\s+')
 
+    defaults = [
+        ('default_foreground', 'FFDE3B', 'Default foreground color'),
+        ('soon_foreground', 'FF000D', 'Color used for events occuring soon'),
+        ]
+
     def __init__(self, **config):
         config['func'] = self.get_cal
         super().__init__(**config)
+        self.add_defaults(GCal.defaults)
         self._current_item = None
+        self.foreground = self.default_foreground
 
     def get_cal(self):
         self._data = self.cached_fetch()
@@ -211,7 +218,12 @@ class GCal(CachedProxyRequest):
             return 'No Events'
 
         self._current_item = rand.choice(self._data) # .decode('utf-8').split()
-        return self._format_line(self._current_item)
+        if self._current_item[0]:
+            self.foreground = self.soon_foreground
+        else:
+            self.foreground = self.default_foreground
+
+        return self._format_line(self._current_item[1])
 
     def _format_line(self, line):
         line = line.decode('utf-8').split()
@@ -221,25 +233,46 @@ class GCal(CachedProxyRequest):
     def _fetch(self):
         now = datetime.now(tz=tz.gettz('America/Chicago'))
         past_dt = now - timedelta(hours=1)
+        short_dt = now + timedelta(hours=1)
         future_dt = now + timedelta(hours=120)
 
-        cmd = [GCAL_EXECUTABLE]
+        short_cmd = [GCAL_EXECUTABLE]
         if self.https_proxy:
-            cmd.extend(['--proxy', self.https_proxy])
+            short_cmd.extend(['--proxy', self.https_proxy])
 
-        cmd.extend(['--nocolor',
-                    '--prefix',
-                    '%a %b %d',
-                    'agenda',
-                    past_dt.strftime(GCal.DATE_FORMAT),
-                    future_dt.strftime(GCal.DATE_FORMAT),
-                    ])
+        short_cmd.extend(['--nocolor',
+                          '--prefix',
+                          '%a %b %d',
+                          'agenda',
+                          past_dt.strftime(GCal.DATE_FORMAT),
+                          short_dt.strftime(GCal.DATE_FORMAT),
+                          '--noallday',
+                          ])
 
-        proc = subprocess.check_output(cmd)
+        proc = subprocess.check_output(short_cmd)
 
         if proc:
-            lines = [GCal.SPACE_REGEX.sub(b' ', x) for x in proc.splitlines() if x]
-            return lines
+            lines = [(True, GCal.SPACE_REGEX.sub(b' ', x)) for x in proc.splitlines()
+                        if x and not x.startswith(b'No Events Found')]
+
+        long_cmd = [GCAL_EXECUTABLE]
+        if self.https_proxy:
+            long_cmd.extend(['--proxy', self.https_proxy])
+
+        long_cmd.extend(['--nocolor',
+                          '--prefix',
+                          '%a %b %d',
+                          'agenda',
+                          short_dt.strftime(GCal.DATE_FORMAT),
+                          future_dt.strftime(GCal.DATE_FORMAT),
+                          ])
+
+        proc = subprocess.check_output(long_cmd)
+
+        if proc:
+            lines.extend([(False, GCal.SPACE_REGEX.sub(b' ', x)) for x in proc.splitlines()
+                if x and GCal.SPACE_REGEX.sub(b' ', x) not in map(lambda x: x[1], lines)])
+        return lines
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
@@ -256,7 +289,9 @@ class GCal(CachedProxyRequest):
                 self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
             else:
                 return
-        self.update(self._format_line(self._current_item))
+
+        self.foreground = self.soon_foreground if self._current_item[0] else self.default_foreground
+        self.update(self._format_line(self._current_item[1]))
 
 
 class Krill(CachedProxyRequest):
@@ -571,7 +606,7 @@ screens = [
                    foreground=extension_defaults.foreground),
                 widget.TextBox('Cal:'),
                 GCal(update_interval=11,
-                     foreground=extension_defaults.foreground,
+                     default_foreground=extension_defaults.foreground,
                      debug=False,
                     ),
             ],
