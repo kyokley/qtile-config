@@ -58,12 +58,15 @@ BUTTON_DOWN = 5
 BUTTON_LEFT = 1
 BUTTON_RIGHT = 3
 
+
 class CachedProxyRequest(widget.GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
         ('https_proxy', None, 'HTTPS proxy to use for requests'),
         ('socks_proxy', None, 'SOCKS proxy to use for requests'),
-        ('cache_expiration', 5, 'Length of time in minutes that cache is valid for'),
+        ('cache_expiration',
+         5,
+         'Length of time in minutes that cache is valid for'),
         ('debug', False, 'Enable additional debugging'),
         ]
 
@@ -113,7 +116,9 @@ class CachedProxyRequest(widget.GenPollText):
         self._last_update = None
         self._cached_data = None
 
+
 WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
+
 
 class Weather(CachedProxyRequest):
     URL = 'http://api.openweathermap.org/data/2.5/weather?id=4887398&units=imperial&appid=c4f4551816bd45b67708bea102d93522'
@@ -153,6 +158,7 @@ class Weather(CachedProxyRequest):
 
             self.update(weather)
 
+
 class VT(CachedProxyRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
 
@@ -167,14 +173,19 @@ class VT(CachedProxyRequest):
         return self._current_item.decode('utf-8')
 
     def _fetch(self):
-        proc = subprocess.check_output([VT_EXECUTABLE, 'list', '-qu'],
-                                       env={'VT_DEFAULT_LIST': 'personal',
-                                            'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
-                                            'VT_USERNAME': 'yokley',
-                                            'VT_PROXY': self.socks_proxy or ''})
+        proc = subprocess.check_output(
+            [VT_EXECUTABLE, 'list', '-qu'],
+            env={'VT_DEFAULT_LIST': 'personal',
+                 'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
+                 'VT_USERNAME': 'yokley',
+                 'VT_PROXY': self.socks_proxy or ''})
         if proc:
-            lines = [VT.REGEX.search(x).group().strip() for x in proc.splitlines()
-                        if x and x.strip() and VT.REGEX.search(x) and VT.REGEX.search(x).group().strip()]
+            lines = [VT.REGEX.search(x).group().strip()
+                     for x in proc.splitlines()
+                     if (x and
+                         x.strip() and
+                         VT.REGEX.search(x) and
+                         VT.REGEX.search(x).group().strip())]
             return lines
         return [b'Failed to load']
 
@@ -217,7 +228,7 @@ class GCal(CachedProxyRequest):
         if not self._data:
             return 'No Events'
 
-        self._current_item = rand.choice(self._data) # .decode('utf-8').split()
+        self._current_item = rand.choice(self._data)  # .decode('utf-8').split()
         if self._current_item[0]:
             self.foreground = self.soon_foreground
         else:
