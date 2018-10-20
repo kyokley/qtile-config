@@ -4,7 +4,7 @@
 # Most of what is below has been taken from a gist by Airblader
 # https://gist.github.com/Airblader/3a96a407e16dae155744
 
-import subprocess # nosec
+import subprocess  # nosec
 import shlex
 import xcffib
 import random
@@ -17,10 +17,11 @@ from xcffib.xproto import *
 from PIL import Image
 
 XCB_MAP_STATE_VIEWABLE = 2
-SCREEN_SLEEP = 10 # in minutes
-DPMS_CHECK = 10 # in seconds
+SCREEN_SLEEP = 610  # in seconds
+DPMS_CHECK = 10  # in seconds
 
 FILE_LOCK_PATH = '/tmp/pylock.pid'
+
 
 class Color(object):
     BLANK = '#00000000'  # blank
@@ -30,9 +31,11 @@ class Color(object):
     WRONG = '#880000bb'  # wrong
     VERIFYING = '#bb00bbbb'  # verifying
 
+
 def screenshot():
-    args = shlex.split('import -window root /tmp/.i3lock.png') # nosec
+    args = shlex.split('import -window root /tmp/.i3lock.png')  # nosec
     subprocess.run(args)
+
 
 def xcb_fetch_windows():
     """ Returns an array of rects of currently visible windows. """
@@ -53,6 +56,7 @@ def xcb_fetch_windows():
 
     return rects
 
+
 def obscure_image(image):
     """ Obscures the given image. """
     size = image.size
@@ -61,14 +65,17 @@ def obscure_image(image):
     if size[0] < pixel_size or size[1] < pixel_size:
         return image
 
-    image = image.resize((int(size[0] / pixel_size), int(size[1] / pixel_size)), Image.NEAREST)
+    image = image.resize(
+            (int(size[0] / pixel_size), int(size[1] / pixel_size)),
+            Image.NEAREST)
     image = image.resize((int(size[0]), int(size[1])), Image.NEAREST)
 
     return image
 
+
 def obscure(rects):
     """ Takes an array of rects to obscure from the screenshot. """
-    image = Image.open('/tmp/.i3lock.png') # nosec
+    image = Image.open('/tmp/.i3lock.png')  # nosec
 
     for rect in rects:
         area = (
@@ -81,7 +88,8 @@ def obscure(rects):
         cropped = obscure_image(cropped)
         image.paste(cropped, area)
 
-    image.save('/tmp/.i3lock.png') # nosec
+    image.save('/tmp/.i3lock.png')  # nosec
+
 
 def lock_screen(event, blur=False):
     cmd = ['i3lock']
@@ -89,7 +97,7 @@ def lock_screen(event, blur=False):
     if blur:
         cmd.extend(['--blur=5'])
     else:
-        cmd.extend(['-i', '/tmp/.i3lock.png']) # nosec
+        cmd.extend(['-i', '/tmp/.i3lock.png'])  # nosec
 
     args = shlex.split('''--insidevercolor={clearish}   \
                           --ringvercolor={verifying}     \
@@ -128,6 +136,7 @@ def lock_screen(event, blur=False):
     subprocess.run(cmd)
     event.set()
 
+
 def handle_power_settings():
     done_event = threading.Event()
 
@@ -136,15 +145,17 @@ def handle_power_settings():
     dpms_thread.start()
     return done_event
 
+
 def _force_screen_off(event):
     count = 0
     while not event.is_set():
         count += 1
 
-        if (count * DPMS_CHECK) % (SCREEN_SLEEP * 60) == 0:
+        if (count * DPMS_CHECK) % SCREEN_SLEEP == 0:
             count = 0
             subprocess.run(shlex.split('xset dpms force off'))
         time.sleep(DPMS_CHECK)
+
 
 def _create_pid_file():
     if os.path.exists(FILE_LOCK_PATH):
@@ -154,6 +165,7 @@ def _create_pid_file():
             f.write(str(os.getpid()))
 
         return True
+
 
 def main(blur=False):
     got_lock = _create_pid_file()
@@ -178,5 +190,6 @@ def main(blur=False):
 
     os.remove(FILE_LOCK_PATH)
 
+
 if __name__ == '__main__':
-    main(blur=random.choice([True, False])) # nosec
+    main(blur=random.choice([True, False]))  # nosec
