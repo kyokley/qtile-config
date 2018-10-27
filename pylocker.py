@@ -17,7 +17,7 @@ from xcffib.xproto import *
 from PIL import Image
 
 XCB_MAP_STATE_VIEWABLE = 2
-SCREEN_SLEEP = 610  # in seconds
+SCREEN_SLEEP = 600  # in seconds
 DPMS_CHECK = 10  # in seconds
 
 FILE_LOCK_PATH = '/tmp/pylock.pid'
