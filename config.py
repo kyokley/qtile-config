@@ -439,6 +439,9 @@ keys = [
     Key([MOD, SHIFT], "k", lazy.layout.shuffle_up()),
     Key([MOD], ENTER, lazy.layout.swap_main()),
 
+    # Swap main pane
+    Key([MOD], "f", lazy.layout.flip()),
+
     # Floating
     Key([MOD], "t", lazy.window.toggle_floating()),
 
