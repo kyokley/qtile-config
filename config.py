@@ -91,7 +91,8 @@ class CachedProxyRequest(widget.GenPollText):
             self._locked = True
             if (not self._cached_data or
                     not self._last_update or
-                    self._last_update + timedelta(minutes=self.cache_expiration) < datetime.now()):
+                    self._last_update + timedelta(
+                        minutes=self.cache_expiration) < datetime.now()):
                 self._print('Getting data')
                 self._cached_data = self._fetch()
                 self._last_update = datetime.now()
@@ -121,7 +122,8 @@ WeatherTuple = namedtuple('WeatherTuple', 'temp conditions')
 
 
 class Weather(CachedProxyRequest):
-    URL = 'http://api.openweathermap.org/data/2.5/weather?id=4887398&units=imperial&appid=c4f4551816bd45b67708bea102d93522'
+    URL = ('http://api.openweathermap.org/data/2.5/weather?'
+           'id=4887398&units=imperial&appid=c4f4551816bd45b67708bea102d93522')
     defaults = [
         ('low_temp_threshold', 45, 'Temp to trigger low foreground'),
         ('high_temp_threshold', 80, 'Temp to trigger high foreground'),
@@ -169,7 +171,8 @@ class VT(CachedProxyRequest):
 
     def get_vt(self):
         self._data = self.cached_fetch()
-        self._current_item = rand.choice(self._data) if self._data else b'No items'
+        self._current_item = rand.choice(
+            self._data) if self._data else b'No items'
         return self._current_item.decode('utf-8')
 
     def _fetch(self):
@@ -199,7 +202,8 @@ class VT(CachedProxyRequest):
                 else:
                     idx = self._data.index(self._current_item) - 1
                 self._current_item = self._data[idx % len(self._data)]
-                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
+                self._last_update = datetime.now() + timedelta(
+                    seconds=self.update_interval)
             else:
                 return
 
@@ -228,7 +232,7 @@ class GCal(CachedProxyRequest):
         if not self._data:
             return 'No Events'
 
-        self._current_item = rand.choice(self._data)  # .decode('utf-8').split()
+        self._current_item = rand.choice(self._data)
         if self._current_item[0]:
             self.foreground = self.soon_foreground
         else:
@@ -263,26 +267,30 @@ class GCal(CachedProxyRequest):
         proc = subprocess.check_output(short_cmd)
 
         if proc:
-            lines = [(True, GCal.SPACE_REGEX.sub(b' ', x)) for x in proc.splitlines()
-                        if x and not x.startswith(b'No Events Found')]
+            lines = [(True, GCal.SPACE_REGEX.sub(b' ', x))
+                     for x in proc.splitlines()
+                     if x and not x.startswith(b'No Events Found')]
 
         long_cmd = [GCAL_EXECUTABLE]
         if self.https_proxy:
             long_cmd.extend(['--proxy', self.https_proxy])
 
         long_cmd.extend(['--nocolor',
-                          '--prefix',
-                          '%a %b %d',
-                          'agenda',
-                          short_dt.strftime(GCal.DATE_FORMAT),
-                          future_dt.strftime(GCal.DATE_FORMAT),
-                          ])
+                         '--prefix',
+                         '%a %b %d',
+                         'agenda',
+                         short_dt.strftime(GCal.DATE_FORMAT),
+                         future_dt.strftime(GCal.DATE_FORMAT),
+                         ])
 
         proc = subprocess.check_output(long_cmd)
 
         if proc:
-            lines.extend([(False, GCal.SPACE_REGEX.sub(b' ', x)) for x in proc.splitlines()
-                if x and GCal.SPACE_REGEX.sub(b' ', x) not in map(lambda x: x[1], lines)])
+            lines.extend(
+               [(False, GCal.SPACE_REGEX.sub(b' ', x))
+                   for x in proc.splitlines()
+                if x and GCal.SPACE_REGEX.sub(b' ', x) not in map(
+                    lambda x: x[1], lines)])
         return lines
 
     def button_press(self, x, y, button):
@@ -297,11 +305,14 @@ class GCal(CachedProxyRequest):
                 else:
                     idx = self._data.index(self._current_item) - 1
                 self._current_item = self._data[idx % len(self._data)]
-                self._last_update = datetime.now() + timedelta(seconds=self.update_interval)
+                self._last_update = datetime.now() + timedelta(
+                        seconds=self.update_interval)
             else:
                 return
 
-        self.foreground = self.soon_foreground if self._current_item[0] else self.default_foreground
+        self.foreground = (
+                self.soon_foreground
+                if self._current_item[0] else self.default_foreground)
         self.update(self._format_line(self._current_item[1]))
 
 
@@ -325,23 +336,29 @@ class Krill(CachedProxyRequest):
             return 'Could not load data from sources'
 
         if (not self._last_item_change_time or
-                self._last_item_change_time  + timedelta(seconds=self.update_interval) < datetime.now()):
+                self._last_item_change_time + timedelta(
+                    seconds=self.update_interval) < datetime.now()):
             self._current_item = rand.choice(self._data)
             self._last_item_change_time = datetime.now()
         return self._current_item['title']
 
     def _fetch(self):
-        cmd = [KRILL_EXECUTABLE, '-S', os.path.expanduser(self.sources_file), '--snapshot']
-        proc = subprocess.check_output(cmd,
-                                       env={'http_proxy': self.http_proxy or '',
-                                            'https_proxy': self.https_proxy or ''})
+        cmd = [KRILL_EXECUTABLE,
+               '-S',
+               os.path.expanduser(self.sources_file),
+               '--snapshot']
+        proc = subprocess.check_output(
+                cmd,
+                env={'http_proxy': self.http_proxy or '',
+                     'https_proxy': self.https_proxy or ''})
         if proc:
             return json.loads(proc)
         return ['Failed to load']
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
-            self.qtile.cmd_spawn('vivaldi {}'.format(self._current_item['link']))
+            self.qtile.cmd_spawn('vivaldi {}'.format(
+                self._current_item['link']))
         elif button in (BUTTON_UP, BUTTON_DOWN):
             if self._data:
                 if button == BUTTON_UP:
@@ -350,7 +367,9 @@ class Krill(CachedProxyRequest):
                     idx = self._data.index(self._current_item) - 1
                 self._current_item = self._data[idx % len(self._data)]
                 self.update(self._current_item['title'])
-                self._last_item_change_time = datetime.now() + timedelta(seconds=self.update_interval)
+                self._last_item_change_time = datetime.now() + timedelta(
+                        seconds=self.update_interval)
+
 
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
@@ -360,8 +379,12 @@ class ScreenLayout(widget.CurrentLayout):
             self.bar.draw()
         hook.subscribe.layout_change(hook_layout_change)
 
-        hook_screen_change = functools.partial(hook_layout_change, layout=None, group=None)
+        hook_screen_change = functools.partial(
+                hook_layout_change,
+                layout=None,
+                group=None)
         hook.subscribe.current_screen_change(hook_screen_change)
+
 
 class MaxCPUGraph(widget.CPUGraph):
     def __init__(self, **config):
@@ -393,8 +416,8 @@ class MaxCPUGraph(widget.CPUGraph):
             except StopIteration:
                 continue
 
-            busy = (new_user + new_nice + new_sys
-                        - old_user - old_nice - old_sys)
+            busy = (
+                new_user + new_nice + new_sys - old_user - old_nice - old_sys)
             total = busy + new_idle - old_idle
 
             if total:
@@ -446,17 +469,17 @@ keys = [
     Key([MOD], "t", lazy.window.toggle_floating()),
 
     # Switch window focus to other pane(s) of stack
-    #Key([MOD], "space", lazy.layout.next()),
+    # Key([MOD], "space", lazy.layout.next()),
 
     # Swap panes of split stack
-    #Key([MOD, SHIFT], "space", lazy.layout.rotate()),
+    # Key([MOD, SHIFT], "space", lazy.layout.rotate()),
 
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
     Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
-    #Key([MOD], "space", lazy.spawn("terminator")),
+    # Key([MOD], "space", lazy.spawn("terminator")),
 
     # Toggle between different layouts as defined below
     Key([MOD], SPACE, lazy.next_layout()),
@@ -464,28 +487,41 @@ keys = [
 
     Key([MOD, CONTROL], "r", lazy.restart()),
     Key([MOD, CONTROL], "q", lazy.shutdown()),
-    Key([MOD, CONTROL], "l", lazy.spawn([os.path.expanduser('~/.config/qtile/force_lock.sh')])),
-    Key([MOD], "p", lazy.spawn("dmenu_run -fn '{font}:pixelsize={fontsize}'".format(font=dmenu_font,
-                                                                                    fontsize=dmenu_fontsize))),
+    Key([MOD, CONTROL], "l", lazy.spawn(
+        [os.path.expanduser('~/.config/qtile/force_lock.sh')])),
+    Key([MOD], "p", lazy.spawn(
+        "dmenu_run -fn '{font}:pixelsize={fontsize}'".format(
+            font=dmenu_font,
+            fontsize=dmenu_fontsize))),
 
     # Spotify Commands
-    ## NEXT
-    Key([MOD, CONTROL], 'n', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
-    Key([MOD, CONTROL], PERIOD, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "n"])),
+    # NEXT
+    Key([MOD, CONTROL], 'n', lazy.spawn(
+        [os.path.expanduser(
+            "~/workspace/SpotifyController/spotify.sh"), "n"])),
+    Key([MOD, CONTROL], PERIOD, lazy.spawn(
+        [os.path.expanduser(
+            "~/workspace/SpotifyController/spotify.sh"), "n"])),
 
-    ## PREV
-    Key([MOD, CONTROL], 'p', lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
-    Key([MOD, CONTROL], COMMA, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "p"])),
+    # PREV
+    Key([MOD, CONTROL], 'p', lazy.spawn(
+        [os.path.expanduser(
+            "~/workspace/SpotifyController/spotify.sh"), "p"])),
+    Key([MOD, CONTROL], COMMA, lazy.spawn(
+        [os.path.expanduser(
+            "~/workspace/SpotifyController/spotify.sh"), "p"])),
 
-    ## PAUSE
-    Key([MOD, CONTROL], SPACE, lazy.spawn([os.path.expanduser("~/workspace/SpotifyController/spotify.sh"), "pause"])),
+    # PAUSE
+    Key([MOD, CONTROL], SPACE, lazy.spawn(
+        [os.path.expanduser(
+            "~/workspace/SpotifyController/spotify.sh"), "pause"])),
 
-    ## Volume Controls
+    # Volume Controls
     Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
     Key([], 'XF86AudioLowerVolume', lazy.spawn('amixer -q set Master 10%-')),
     Key([], 'XF86AudioMute', lazy.spawn('amixer -q set Master toggle')),
 
-    ## Brightness Controls
+    # Brightness Controls
     Key([], 'XF86MonBrightnessUp', lazy.spawn("xbacklight -inc 10")),
     Key([], 'XF86MonBrightnessDown', lazy.spawn("xbacklight -dec 10")),
 ]
@@ -528,7 +564,7 @@ for i in groups:
         # mod1 + letter of group = switch to group
         Key([MOD], i.name, lazy.group[i.name].toscreen()),
 
-        # mod1 + shift + letter of group = switch to & move focused window to group
+        # mod1 + shift + letter = switch to & move focused window to group
         Key([MOD, SHIFT], i.name, lazy.window.togroup(i.name)),
     ])
 
@@ -538,7 +574,9 @@ layouts = [
     layout.TreeTab(name='Max'),
 ]
 
-ExtensionDefault = namedtuple('ExtensionDefault', 'font fontsize padding foreground background inactive_foreground')
+ExtensionDefault = namedtuple(
+    'ExtensionDefault',
+    'font fontsize padding foreground background inactive_foreground')
 extension_defaults = ExtensionDefault(
     font='sans',
     fontsize=12,
@@ -571,13 +609,13 @@ screens = [
                 widget.NetGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('U:'),
                 widget.CheckUpdates(
-                               display_format='{updates}',
-                               distro='Ubuntu',
-                               foreground=extension_defaults.foreground,
-                               colour_no_updates=extension_defaults.foreground,
-                               colour_have_updates=extension_defaults.foreground,
-                               update_interval=3600, # Update every hour
-                               restart_indicator='*',
+                         display_format='{updates}',
+                         distro='Ubuntu',
+                         foreground=extension_defaults.foreground,
+                         colour_no_updates=extension_defaults.foreground,
+                         colour_have_updates=extension_defaults.foreground,
+                         update_interval=3600,  # Update every hour
+                         restart_indicator='*',
                     ),
                 widget.TextBox('Bat:'),
                 widget.Battery(energy_now_file='charge_now',
@@ -586,12 +624,12 @@ screens = [
                                low_percentage=.3,
                                foreground=extension_defaults.foreground,
                                format='{percent:2.0%}',
-                ),
+                               ),
                 widget.BatteryIcon(),
                 widget.TextBox('W:'),
                 Weather(
                         normal_foreground=extension_defaults.foreground,
-                        update_interval=3600, # Update every hour
+                        update_interval=3600,  # Update every hour
                         ),
                 widget.Systray(),
                 widget.Clock(
@@ -622,7 +660,7 @@ screens = [
                 GCal(update_interval=11,
                      default_foreground=extension_defaults.foreground,
                      debug=False,
-                    ),
+                     ),
             ],
             24,
         )
@@ -672,6 +710,7 @@ focus_on_window_activation = "smart"
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+
 
 @hook.subscribe.startup_once
 def autostart():
