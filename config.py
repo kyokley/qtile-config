@@ -462,6 +462,10 @@ keys = [
     Key([MOD, SHIFT], "k", lazy.layout.shuffle_up()),
     Key([MOD], ENTER, lazy.layout.swap_main()),
 
+    # Multi-monitor support
+    Key([MOD], "w", lazy.to_screen(0)),
+    Key([MOD], "e", lazy.to_screen(1)),
+
     # Swap main pane
     Key([MOD], "f", lazy.layout.flip()),
 
