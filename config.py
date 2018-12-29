@@ -59,6 +59,29 @@ BUTTON_LEFT = 1
 BUTTON_RIGHT = 3
 
 
+class ScreenLockIndicator(widget.GenPollText):
+    defaults = [
+        ('update_interval', 10, 'Update interval'),
+    ]
+
+    def __init__(self, **config):
+        config['func'] = self.check_autolock
+        super().__init__(**config)
+        self.add_defaults(ScreenLockIndicator.defaults)
+
+    def check_autolock(self):
+        try:
+            output = subprocess.check_output(
+                "ps ax | grep xautolock | grep -v grep | awk '{print $1}'",
+                shell=True)
+
+            if not output:
+                return 'SL Disabled'
+        except subprocess.CalledProcessError:
+            return 'SL Disabled'
+        return ''
+
+
 class CachedProxyRequest(widget.GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
@@ -493,6 +516,8 @@ keys = [
     Key([MOD, CONTROL], "q", lazy.shutdown()),
     Key([MOD, CONTROL], "l", lazy.spawn(
         [os.path.expanduser('~/.config/qtile/force_lock.sh')])),
+    Key([MOD, CONTROL], "d", lazy.spawn(
+        [os.path.expanduser('~/.config/qtile/toggle_autolock.sh')])),
     Key([MOD], "p", lazy.spawn(
         "dmenu_run -fn '{font}:pixelsize={fontsize}'".format(
             font=dmenu_font,
@@ -595,6 +620,9 @@ screens = [
         top=bar.Bar(
             [
                 widget.WindowName(for_current_screen=True),
+                ScreenLockIndicator(
+                    foreground='FF000D',
+                ),
                 widget.TextBox('Vol:'),
                 widget.Volume(
                           foreground=extension_defaults.foreground,
