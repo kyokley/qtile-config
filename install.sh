@@ -2,8 +2,8 @@
 
 set -e
 
-PY27=2.7.13
-PY3=3.6.2
+PY27=2.7.15
+PY3=3.6.7
 
 sudo aptitude install libxcb-render0-dev \
                       libffi-dev \
