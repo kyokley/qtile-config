@@ -50,10 +50,13 @@ except ImportError:
 
 rand = random.SystemRandom()
 
-VT_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/vt_env/bin/vt')
+VT_CMD = ('docker run --rm -v /home/yokley/.ssh:/root/.ssh '
+          '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
+          '--env VT_USERNAME=yokley --env VT_DEFAULT_LIST=personal '
+          '--env VT_PROXY= --net=host kyokley/vt list -qu')
 GCAL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/gcal_env/bin/gcalcli')
 KRILL_CMD = (
-    'docker run --rm -it kyokley/krill-feed '
+    'docker run --rm kyokley/krill-feed '
     'krill++ -S /app/sources.txt --snapshot')
 
 BUTTON_UP = 4
@@ -165,19 +168,21 @@ class Weather(CachedProxyRequest):
 
     def get_weather(self):
         data = self.cached_fetch()
-        conditions = rand.choice(data['weather'])['description']
+        if data:
+            conditions = rand.choice(data['weather'])['description']
 
-        tup = WeatherTuple(data['main']['temp'], conditions)
+            tup = WeatherTuple(data['main']['temp'], conditions)
 
-        if tup.temp > self.high_temp_threshold:
-            self.foreground = self.high_foreground
-        elif tup.temp < self.low_temp_threshold:
-            self.foreground = self.low_foreground
-        else:
-            self.foreground = self.normal_foreground
+            if tup.temp > self.high_temp_threshold:
+                self.foreground = self.high_foreground
+            elif tup.temp < self.low_temp_threshold:
+                self.foreground = self.low_foreground
+            else:
+                self.foreground = self.normal_foreground
 
-        return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
-                                                 conditions=tup.conditions)
+            return '{temp:.2g}F {conditions}'.format(temp=tup.temp,
+                                                     conditions=tup.conditions)
+        return 'N/A'
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
@@ -202,12 +207,8 @@ class VT(CachedProxyRequest):
         return self._current_item.decode('utf-8')
 
     def _fetch(self):
-        proc = subprocess.check_output(
-            [VT_EXECUTABLE, 'list', '-qu'],
-            env={'VT_DEFAULT_LIST': 'personal',
-                 'VT_URL': 'https://almagest.dyndns.org:7001/vittlify/',
-                 'VT_USERNAME': 'yokley',
-                 'VT_PROXY': self.socks_proxy or ''})
+        cmd = shlex.split(VT_CMD)
+        proc = subprocess.check_output(cmd)
         if proc:
             lines = [VT.REGEX.search(x).group().strip()
                      for x in proc.splitlines()
@@ -370,10 +371,7 @@ class Krill(CachedProxyRequest):
 
     def _fetch(self):
         cmd = shlex.split(KRILL_CMD)
-        proc = subprocess.check_output(
-                cmd,
-                env={'http_proxy': self.http_proxy or '',
-                     'https_proxy': self.https_proxy or ''})
+        proc = subprocess.check_output(cmd)
         if proc:
             return json.loads(proc)
         return ['Failed to load']
@@ -687,7 +685,8 @@ screens = [
                       update_interval=21),
                 widget.TextBox('VT:'),
                 VT(update_interval=10,
-                   foreground=extension_defaults.foreground),
+                   foreground=extension_defaults.foreground,
+                   ),
                 widget.TextBox('Cal:'),
                 GCal(update_interval=11,
                      default_foreground=extension_defaults.foreground,
