@@ -32,6 +32,7 @@ import re
 import functools
 import json
 import multiprocessing
+import shlex
 
 from datetime import datetime, timedelta
 from dateutil import tz
@@ -51,7 +52,9 @@ rand = random.SystemRandom()
 
 VT_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/vt_env/bin/vt')
 GCAL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/gcal_env/bin/gcalcli')
-KRILL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/krill/bin/krill++')
+KRILL_CMD = (
+    'docker run --rm -it kyokley/krill-feed '
+    'krill++ -S /app/sources.txt --snapshot')
 
 BUTTON_UP = 4
 BUTTON_DOWN = 5
@@ -366,10 +369,7 @@ class Krill(CachedProxyRequest):
         return self._current_item['title']
 
     def _fetch(self):
-        cmd = [KRILL_EXECUTABLE,
-               '-S',
-               os.path.expanduser(self.sources_file),
-               '--snapshot']
+        cmd = shlex.split(KRILL_CMD)
         proc = subprocess.check_output(
                 cmd,
                 env={'http_proxy': self.http_proxy or '',

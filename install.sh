@@ -11,7 +11,8 @@ sudo aptitude install libxcb-render0-dev \
                       libpangocairo-1.0-0 \
                       thunar \
                       dmenu \
-                      nitrogen
+                      nitrogen \
+                      xautolock
 
 xdg-mime default Thunar.desktop inode/directory
 
@@ -29,10 +30,11 @@ ln -s "$(pwd)" ~/.config/qtile
 sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
 
 pyenv virtualenv $PY3 vt_env
-$HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/vittlify-cli.git
+$HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/vittlify-cli.git pip -U
+$HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/terminaltables.git -U
 
 pyenv virtualenv $PY27 gcal_env
-$HOME/.pyenv/versions/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
+$HOME/.pyenv/versions/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git pip -U
 
 # Install i3lock-color
 cur_dir="$(pwd)"
