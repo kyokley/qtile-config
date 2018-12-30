@@ -54,7 +54,9 @@ VT_CMD = ('docker run --rm -v /home/yokley/.ssh:/root/.ssh '
           '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
           '--env VT_USERNAME=yokley --env VT_DEFAULT_LIST=personal '
           '--env VT_PROXY= --net=host kyokley/vt list -qu')
-GCAL_EXECUTABLE = os.path.expanduser('~/.pyenv/versions/gcal_env/bin/gcalcli')
+GCAL_CMD = ('docker run --rm '
+            '-v /home/yokley/.gcalcli_oauth:/root/.gcalcli_oauth '
+            'kyokley/gcalcli')
 KRILL_CMD = (
     'docker run --rm kyokley/krill-feed '
     'krill++ -S /app/sources.txt --snapshot')
@@ -193,7 +195,7 @@ class Weather(CachedProxyRequest):
 
 
 class VT(CachedProxyRequest):
-    REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)')
+    REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)') # noqa
 
     def __init__(self, **config):
         config['func'] = self.get_vt
@@ -239,7 +241,7 @@ class VT(CachedProxyRequest):
 
 class GCal(CachedProxyRequest):
     DATE_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
-    SPACE_REGEX = re.compile(b'\s+')
+    SPACE_REGEX = re.compile(b'\s+') # noqa
 
     defaults = [
         ('default_foreground', 'FFDE3B', 'Default foreground color'),
@@ -278,7 +280,7 @@ class GCal(CachedProxyRequest):
         short_dt = now + timedelta(hours=1)
         future_dt = now + timedelta(hours=120)
 
-        short_cmd = [GCAL_EXECUTABLE]
+        short_cmd = shlex.split(GCAL_CMD)
         if self.https_proxy:
             short_cmd.extend(['--proxy', self.https_proxy])
 
@@ -298,7 +300,7 @@ class GCal(CachedProxyRequest):
                      for x in proc.splitlines()
                      if x and not x.startswith(b'No Events Found')]
 
-        long_cmd = [GCAL_EXECUTABLE]
+        long_cmd = shlex.split(GCAL_CMD)
         if self.https_proxy:
             long_cmd.extend(['--proxy', self.https_proxy])
 

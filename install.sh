@@ -2,7 +2,6 @@
 
 set -e
 
-PY27=2.7.15
 PY3=3.6.7
 
 sudo aptitude install libxcb-render0-dev \
@@ -29,12 +28,14 @@ ln -s "$(pwd)" ~/.config/qtile
 
 sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
 
-pyenv virtualenv $PY3 vt_env
-$HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/vittlify-cli.git pip -U
-$HOME/.pyenv/versions/vt_env/bin/pip install git+https://github.com/kyokley/terminaltables.git -U
+docker pull kyokley/vt
 
-pyenv virtualenv $PY27 gcal_env
-$HOME/.pyenv/versions/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git pip -U
+virtualenv -p python3 /tmp/gcal_env
+/tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
+/tmp/gcal_env/bin/gcalcli agenda
+rm -rf /tmp/gcal_env
+
+docker pull kyokley/gcalcli
 
 # Install i3lock-color
 cur_dir="$(pwd)"
