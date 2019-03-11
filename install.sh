@@ -17,10 +17,12 @@ xdg-mime default Thunar.desktop inode/directory
 
 pyenv virtualenv $PY3 qtile
 
-$HOME/.pyenv/versions/qtile/bin/pip install six \
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
                                             cffi \
                                             xcffib \
-                                            cairocffi \
+                                            cairocffi
+
+$HOME/.pyenv/versions/qtile/bin/pip install six \
                                             qtile \
                                             -r requirements.txt
 
@@ -29,13 +31,6 @@ ln -s "$(pwd)" ~/.config/qtile
 sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
 
 docker pull kyokley/vt
-
-virtualenv -p python3 /tmp/gcal_env
-/tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
-/tmp/gcal_env/bin/gcalcli agenda
-rm -rf /tmp/gcal_env
-
-docker pull kyokley/gcalcli
 
 # Install i3lock-color
 cur_dir="$(pwd)"
@@ -62,3 +57,11 @@ autoreconf -i && ./configure && make && sudo make install
 cd "$cur_dir"
 rm -rf /tmp/i3lock-color
 xset dpms 600 600 600
+
+virtualenv -p python3 /tmp/gcal_env
+/tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
+/tmp/gcal_env/bin/gcalcli agenda
+rm -rf /tmp/gcal_env
+
+docker pull kyokley/gcalcli
+
