@@ -4,6 +4,8 @@ set -e
 
 PY3=3.6.7
 
+docker ps
+
 sudo aptitude install libxcb-render0-dev \
                       libffi-dev \
                       libcairo2-dev \
@@ -64,4 +66,3 @@ virtualenv -p python3 /tmp/gcal_env
 rm -rf /tmp/gcal_env
 
 docker pull kyokley/gcalcli
-
