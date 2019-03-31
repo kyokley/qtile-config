@@ -553,6 +553,7 @@ keys = [
     # Brightness Controls
     Key([], 'XF86MonBrightnessUp', lazy.spawn("xbacklight -inc 10")),
     Key([], 'XF86MonBrightnessDown', lazy.spawn("xbacklight -dec 10")),
+    Key([], 'XF86Tools', lazy.spawn("kb-light")),
 ]
 
 groups = [Group(i) for i in "1234"]
