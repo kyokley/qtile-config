@@ -464,8 +464,6 @@ PERIOD = 'period'
 COMMA = 'comma'
 ENTER = 'Return'
 
-dmenu_font = 'sans'
-dmenu_fontsize = 16
 
 keys = [
     # Switch between windows in current stack pane
@@ -519,9 +517,8 @@ keys = [
     Key([MOD, CONTROL], "d", lazy.spawn(
         [os.path.expanduser('~/.config/qtile/toggle_autolock.sh')])),
     Key([MOD], "p", lazy.spawn(
-        "dmenu_run -fn '{font}:pixelsize={fontsize}'".format(
-            font=dmenu_font,
-            fontsize=dmenu_fontsize))),
+        "rofi -show combi"
+    )),
 
     # Spotify Commands
     # NEXT

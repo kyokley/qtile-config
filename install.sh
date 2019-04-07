@@ -11,9 +11,11 @@ sudo aptitude install libxcb-render0-dev \
                       libcairo2-dev \
                       libpangocairo-1.0-0 \
                       thunar \
-                      dmenu \
+                      rofi \
                       nitrogen \
                       xautolock
+
+cp -r ./rofi ~/.config/rofi
 
 xdg-mime default Thunar.desktop inode/directory
 
