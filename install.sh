@@ -6,11 +6,13 @@ PY3=3.6.7
 
 docker ps
 
-pamac install dmenu-manjaro \
+pamac install rofi \
               thunar-volman \
               nitrogen \
               xcb-util-xrm \
               xautolock
+
+cp -r ./rofi ~/.config/rofi
 
 xdg-mime default Thunar.desktop inode/directory
 
