@@ -397,7 +397,6 @@ class Krill(CachedProxyRequest):
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
         def hook_layout_change(layout, group):
-            layout = self.qtile.currentGroup.layout
             self.text = layout.name
             self.bar.draw()
         hook.subscribe.layout_change(hook_layout_change)
