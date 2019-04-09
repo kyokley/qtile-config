@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "Running" || sudo intel-virtual-output && echo "Started intel-virtual-output" && sleep 1
 
 echo "Activating fake resolution"
@@ -18,4 +16,8 @@ sleep 5
 
 echo "Restarting qtile"
 /home/yokley/.pyenv/versions/qtile/bin/qtile-cmd -o cmd -f restart > /dev/null 2>&1
+
+echo "Applying new background wallpapers"
+bash /home/yokley/workspace/switch-background/switch.sh
+
 echo "Done"
