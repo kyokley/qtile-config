@@ -10,7 +10,8 @@ pamac install rofi \
               thunar-volman \
               nitrogen \
               xcb-util-xrm \
-              xautolock
+              xautolock \
+              compton
 
 cp -r ./rofi ~/.config/rofi
 
@@ -27,9 +28,20 @@ $HOME/.pyenv/versions/qtile/bin/pip install six \
                                             qtile \
                                             -r requirements.txt
 
-ln -s "$(pwd)" ~/.config/qtile
+if [ ! -h "~/.config/qtile" ]
+then
+    ln -s "$(pwd)" ~/.config/qtile
+fi
 
-sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
+if [ ! -h "~/.config/compton" ]
+then
+    ln -s "$(pwd)/compton" ~/.config/compton
+fi
+
+if [ ! -h "/usr/share/xsessions/qtile.desktop" ]
+then
+    sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
+fi
 
 docker pull kyokley/vt
 
