@@ -515,6 +515,8 @@ keys = [
         [os.path.expanduser('~/.config/qtile/force_lock.sh')])),
     Key([MOD, CONTROL], "d", lazy.spawn(
         [os.path.expanduser('~/.config/qtile/toggle_autolock.sh')])),
+    Key([MOD, CONTROL], "c", lazy.spawn(
+        [os.path.expanduser('~/.config/qtile/toggle_compton.sh')])),
     Key([MOD], "p", lazy.spawn(
         "rofi -show combi"
     )),
