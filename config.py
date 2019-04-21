@@ -752,4 +752,6 @@ def autostart():
 
     subprocess.call(
         shlex.split(
-            "compton --config ~/.config/compton/compton.conf"))
+            "compton -b --config {}".format(
+                os.path.expanduser("~/.config/compton/compton.conf"))
+        ))
