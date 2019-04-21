@@ -502,7 +502,8 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
-    Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
+    # Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
+    Key([MOD, SHIFT], ENTER, lazy.spawn("kitty")),
     # Key([MOD], "space", lazy.spawn("terminator")),
 
     # Toggle between different layouts as defined below
