@@ -598,8 +598,8 @@ for i in groups:
     ])
 
 layouts = [
-    layout.MonadTall(name='Tall', new_at_current=True, border_width=6),
-    layout.MonadWide(name='Wide', new_at_current=True, border_width=6),
+    layout.MonadTall(name='Tall', new_at_current=True, border_width=6, single_border_width=2),
+    layout.MonadWide(name='Wide', new_at_current=True, border_width=6, single_border_width=2),
     layout.TreeTab(name='Max'),
 ]
 
