@@ -598,8 +598,16 @@ for i in groups:
     ])
 
 layouts = [
-    layout.MonadTall(name='Tall', new_at_current=True, border_width=6, single_border_width=2),
-    layout.MonadWide(name='Wide', new_at_current=True, border_width=6, single_border_width=2),
+    layout.MonadTall(name='Tall',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     ),
+    layout.MonadWide(name='Wide',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     ),
     layout.TreeTab(name='Max'),
 ]
 
@@ -733,7 +741,7 @@ floating_layout = layout.Floating(float_rules=[
     {'wname': 'branchdialog'},  # gitk
     {'wname': 'pinentry'},  # GPG key password entry
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
-])
+], border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
