@@ -642,8 +642,6 @@ screens = [
                           partition='/home',
                           foreground=extension_defaults.foreground,
                           format='{p}: {r:.0f}%'),
-                widget.TextBox('Busy:'),
-                widget.HDDBusyGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Mem:'),
                 widget.MemoryGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Cpu:'),
