@@ -488,6 +488,7 @@ keys = [
 
     # Swap main pane
     Key([MOD], "f", lazy.layout.flip()),
+    Key([MOD, SHIFT], "f", lazy.window.toggle_fullscreen()),
 
     # Floating
     Key([MOD], "t", lazy.window.toggle_floating()),
