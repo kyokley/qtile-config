@@ -11,6 +11,7 @@ pamac install rofi \
               nitrogen \
               xcb-util-xrm \
               xautolock \
+              kitty \
               compton
 
 cp -r ./rofi ~/.config/rofi
