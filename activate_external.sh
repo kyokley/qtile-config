@@ -16,8 +16,10 @@ sleep 5
 
 echo "Restarting qtile"
 /home/yokley/.pyenv/versions/qtile/bin/qtile-cmd -o cmd -f restart > /dev/null 2>&1
+echo "qtile restarted successfully"
 
 echo "Applying new background wallpapers"
 bash /home/yokley/workspace/switch-background/switch.sh
+echo "New backgrounds applied"
 
 echo "Done"
