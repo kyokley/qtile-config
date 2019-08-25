@@ -503,7 +503,10 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
-    Key([MOD, SHIFT], ENTER, lazy.spawn("kitty -1")),
+
+    # Open a new terminal
+    # Key([MOD, SHIFT], ENTER, lazy.spawn("kitty -1")),
+    Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
 
     # Toggle between different layouts as defined below
     Key([MOD], SPACE, lazy.next_layout()),
