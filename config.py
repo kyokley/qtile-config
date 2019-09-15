@@ -380,7 +380,7 @@ class Krill(CachedProxyRequest):
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
-            self.qtile.cmd_spawn('vivaldi-stable {}'.format(
+            self.qtile.cmd_spawn('vivaldi-snapshot {}'.format(
                 self._current_item['link']))
         elif button in (BUTTON_UP, BUTTON_DOWN):
             if self._data:
@@ -563,8 +563,8 @@ groups.extend([Group('5',
                      label='5:LO',
                      ),
                Group('6',
-                     matches=[Match(wm_class=['vivaldi-stable']),
-                              Match(wm_class=['Vivaldi-stable']),
+                     matches=[Match(wm_class=['vivaldi-snapshot']),
+                              Match(wm_class=['Vivaldi-snapshot']),
                               Match(wm_class=['google-chrome']),
                               Match(wm_class=['Google-chrome']),
                               ],
