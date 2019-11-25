@@ -466,8 +466,15 @@ ENTER = 'Return'
 
 keys = [
     # Switch between windows in current stack pane
-    Key([MOD], "j", lazy.layout.next()),
-    Key([MOD], "k", lazy.layout.previous()),
+    # Key([MOD], "j", lazy.layout.next()),
+    # Key([MOD], "k", lazy.layout.previous()),
+
+    # lazy.layout.next and layout.lazy.previous don't cycle through
+    # floating windows. next_window and prev_window do but they may break
+    # for setups with multiple screens. I'm leaving this until I can test.
+    Key([MOD], "j", lazy.group.next_window()),
+    Key([MOD], "k", lazy.group.prev_window()),
+
     Key([MOD], "h", lazy.layout.shrink_main()),
     Key([MOD], "l", lazy.layout.grow_main()),
 
@@ -741,9 +748,12 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'makebranch'},  # gitk
     {'wmclass': 'maketag'},  # gitk
     {'wname': 'branchdialog'},  # gitk
-    {'wname': 'pinentry'},  # GPG key password entry
+    {'wmclass': 'pinentry-gtk-2'},  # GPG key password entry
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
-], border_focus='FF0000')
+    {'wmclass': 'Conky'},  # Conky
+],
+                                  border_width=0,
+                                  border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
