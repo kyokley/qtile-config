@@ -735,9 +735,12 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'makebranch'},  # gitk
     {'wmclass': 'maketag'},  # gitk
     {'wname': 'branchdialog'},  # gitk
-    {'wname': 'pinentry'},  # GPG key password entry
+    {'wmclass': 'pinentry-gtk-2'},  # GPG key password entry
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
-], border_focus='FF0000')
+    {'wmclass': 'Conky'},  # Conky
+],
+                                  border_width=0,
+                                  border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
