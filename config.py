@@ -752,7 +752,7 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
     {'wmclass': 'Conky'},  # Conky
 ],
-                                  border_width=0,
+                                  border_width=1,
                                   border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
