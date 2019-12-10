@@ -12,7 +12,7 @@ pamac install rofi \
               xcb-util-xrm \
               xautolock \
               kitty \
-              compton
+              picom
 
 cp -r ./rofi ~/.config/rofi
 
@@ -34,9 +34,9 @@ then
     ln -s "$(pwd)" ~/.config/qtile
 fi
 
-if [ ! -h "~/.config/compton" ]
+if [ ! -h "~/.config/picom" ]
 then
-    ln -s "$(pwd)/compton" ~/.config/compton
+    ln -s "$(pwd)/picom" ~/.config/picom
 fi
 
 if [ ! -h "/usr/share/xsessions/qtile.desktop" ]
