@@ -34,9 +34,12 @@ then
     ln -s "$(pwd)" ~/.config/qtile
 fi
 
-if [ ! -h "~/.config/picom" ]
+# Picom is a fork of compton but aliases itself to compton for
+# backwards compatibility. Update all references to picom once
+# all distros have been updated.
+if [ ! -h "~/.config/compton" ]
 then
-    ln -s "$(pwd)/picom" ~/.config/picom
+    ln -s "$(pwd)/compton" ~/.config/compton
 fi
 
 if [ ! -h "/usr/share/xsessions/qtile.desktop" ]
