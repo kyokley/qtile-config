@@ -615,6 +615,12 @@ layouts = [
                      single_border_width=2,
                      ),
     layout.TreeTab(name='Max'),
+    layout.MonadTall(name='Gaps',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     margin=50,
+                     ),
 ]
 
 ExtensionDefault = namedtuple(
@@ -645,8 +651,6 @@ screens = [
                 widget.DF(visible_on_warn=False,
                           foreground=extension_defaults.foreground,
                           format='{p}: {r:.0f}%'),
-                widget.TextBox('Busy:'),
-                widget.HDDBusyGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Mem:'),
                 widget.MemoryGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Cpu:'),
