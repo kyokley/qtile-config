@@ -609,6 +609,19 @@ for i in groups:
     ])
 
 layouts = [
+    layout.MonadTall(name='GapsTall',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     margin=50,
+                     ),
+    layout.MonadWide(name='GapsWide',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     margin=50,
+                     ),
+    layout.TreeTab(name='Max'),
     layout.MonadTall(name='Tall',
                      new_at_current=True,
                      border_width=6,
@@ -618,13 +631,6 @@ layouts = [
                      new_at_current=True,
                      border_width=6,
                      single_border_width=2,
-                     ),
-    layout.TreeTab(name='Max'),
-    layout.MonadTall(name='Gaps',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     margin=50,
                      ),
 ]
 
@@ -762,6 +768,7 @@ floating_layout = layout.Floating(float_rules=[
                                   border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
+bring_front_click = True
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
