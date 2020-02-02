@@ -695,6 +695,11 @@ screens = [
                     ),
                 widget.Spacer(length=10),
                 ScreenLayout(width=bar.STRETCH),
+                widget.Wallpaper(
+                    wallpaper_command='nitrogen --set-scaled --save'.split(),
+                    directory=os.path.expanduser('~/Pictures/wallpapers/space/'),
+                    random_selection=True,
+                ),
                 widget.TextBox('Krl:'),
                 Krill(foreground=extension_defaults.foreground,
                       sources_file='~/workspace/krill_feed/sources.txt',
