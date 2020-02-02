@@ -51,6 +51,7 @@ except ImportError:
 
 rand = random.SystemRandom()
 
+PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
 VT_CMD = ('docker run --rm -v /home/yokley/.ssh:/root/.ssh '
           '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
           '--env VT_USERNAME=yokley --env VT_DEFAULT_LIST=personal '
@@ -780,7 +781,7 @@ screens = [
                 widget.TextBox('WP:'),
                 WallpaperDir(
                     wallpaper_command='nitrogen --set-scaled --save'.split(),
-                    right_click_command='wal -i',
+                    right_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
                     directory=os.path.expanduser('~/Pictures/wallpapers/'),
                     random=True,
                     foreground=extension_defaults.foreground,
