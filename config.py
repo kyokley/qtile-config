@@ -76,6 +76,7 @@ class WallpaperDir(widget.base._TextBox):
          "randomly cycle through the wallpapers."),
         ("label", None, "Use a fixed label instead of image name."),
         ("all_images_label", "All", "Label to use for all images"),
+        ("right_click_command", None, "Command to run for right-click"),
     ]
 
     def __init__(self, **config):
@@ -85,6 +86,7 @@ class WallpaperDir(widget.base._TextBox):
         self._directories = dict()
         self._dir_index = 0
         self._image_index = 0
+        self._cur_image = None
         self.set_wallpaper()
         self.draw()
 
@@ -99,7 +101,7 @@ class WallpaperDir(widget.base._TextBox):
         for root, dirs, files in os.walk(self.directory):
             root_path = Path(root).resolve()
 
-            for file in files:
+            for file in sorted(files):
                 file_path = root_path / file
                 if not self._is_image(file_path):
                     continue
@@ -107,10 +109,10 @@ class WallpaperDir(widget.base._TextBox):
                 self._directories.setdefault(
                     self.all_images_label, []).append(file_path)
 
-            for dir in dirs:
+            for dir in sorted(dirs):
                 dir_path = root_path / dir
 
-                for file in os.listdir(dir_path):
+                for file in sorted(os.listdir(dir_path)):
                     file_path = dir_path / file
                     if file_path.is_file() and self._is_image(file_path):
                         self._directories.setdefault(
@@ -124,6 +126,7 @@ class WallpaperDir(widget.base._TextBox):
             directory = list(self._directories.keys())[self._dir_index]
         except IndexError:
             self._dir_index = 0
+            directory = list(self._directories.keys())[self._dir_index]
 
         images = self._directories[directory]
 
@@ -137,13 +140,13 @@ class WallpaperDir(widget.base._TextBox):
             else:
                 self._image_index = self._image_index % len(images)
 
-            cur_image = images[self._image_index]
+            self._cur_image = images[self._image_index]
         except IndexError:
             self._image_index = 0
-            cur_image = images[self._image_index]
+            self._cur_image = images[self._image_index]
 
         if self.label is None:
-            cur_image_basename = os.path.basename(cur_image)
+            cur_image_basename = os.path.basename(self._cur_image)
             cur_image_basename = (
                 f'{cur_image_basename[:7]}...'
                 if len(cur_image_basename) > 7 else cur_image_basename)
@@ -152,30 +155,38 @@ class WallpaperDir(widget.base._TextBox):
             self.text = self.label
 
         if self.wallpaper_command:
-            self.wallpaper_command.append(cur_image)
+            self.wallpaper_command.append(self._cur_image)
             subprocess.call(self.wallpaper_command)
             self.wallpaper_command.pop()
             return
+
         command = [
             'feh',
             '--bg-fill',
-            cur_image
+            self._cur_image
         ]
         if self.one_screen:
             command.append("--no-xinerama")
         subprocess.call(command)
+        self.update(self.text)
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
             self._image_index += 1
-        elif button == BUTTON_RIGHT:
-            self._image_index -= 1
+            self.set_wallpaper()
+        elif button == BUTTON_RIGHT and self.right_click_command:
+            command = shlex.split(
+                self.right_click_command)
+            command.append(self._cur_image)
+            print(command)
+            subprocess.call(command)
         elif button == BUTTON_UP:
             self._dir_index += 1
+            self.set_wallpaper()
         elif button == BUTTON_DOWN:
             self._dir_index -= 1
+            self.set_wallpaper()
 
-        self.set_wallpaper()
         self.draw()
 
 
@@ -769,6 +780,7 @@ screens = [
                 widget.TextBox('WP:'),
                 WallpaperDir(
                     wallpaper_command='nitrogen --set-scaled --save'.split(),
+                    right_click_command='wal -i',
                     directory=os.path.expanduser('~/Pictures/wallpapers/'),
                     random=True,
                     foreground=extension_defaults.foreground,
