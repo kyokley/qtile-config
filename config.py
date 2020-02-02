@@ -97,7 +97,7 @@ class WallpaperDir(widget.base._TextBox):
         return False
 
     def get_wallpapers(self):
-        self._directories = dict()
+        self._directories = {self.all_images_label: []}
         for root, dirs, files in os.walk(self.directory):
             root_path = Path(root).resolve()
 
