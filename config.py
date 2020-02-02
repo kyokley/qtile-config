@@ -36,6 +36,7 @@ import shlex
 
 from datetime import datetime, timedelta
 from dateutil import tz
+from pathlib import Path
 
 from collections import namedtuple
 
@@ -65,6 +66,117 @@ BUTTON_UP = 4
 BUTTON_DOWN = 5
 BUTTON_LEFT = 1
 BUTTON_RIGHT = 3
+
+
+class WallpaperDir(widget.base._TextBox):
+    defaults = [
+        ("directory", "~/Pictures/wallpapers/", "Wallpaper Directory"),
+        ("wallpaper_command", None, "Wallpaper command"),
+        ("random", False, "If set, use random initial wallpaper and "
+         "randomly cycle through the wallpapers."),
+        ("label", None, "Use a fixed label instead of image name."),
+        ("all_images_label", "All", "Label to use for all images"),
+    ]
+
+    def __init__(self, **config):
+        super().__init__('Empty', width=bar.CALCULATED, **config)
+        self.add_defaults(WallpaperDir.defaults)
+
+        self._directories = dict()
+        self._dir_index = 0
+        self._image_index = 0
+        self.set_wallpaper()
+        self.draw()
+
+    @staticmethod
+    def _is_image(path):
+        if path.is_file() and path.suffix.lower() in ('.jpg', '.jpeg', '.png'):
+            return True
+        return False
+
+    def get_wallpapers(self):
+        self._directories = dict()
+        for root, dirs, files in os.walk(self.directory):
+            root_path = Path(root).resolve()
+
+            for file in files:
+                file_path = root_path / file
+                if not self._is_image(file_path):
+                    continue
+
+                self._directories.setdefault(
+                    self.all_images_label, []).append(file_path)
+
+            for dir in dirs:
+                dir_path = root_path / dir
+
+                for file in os.listdir(dir_path):
+                    file_path = dir_path / file
+                    if file_path.is_file() and self._is_image(file_path):
+                        self._directories.setdefault(
+                            dir_path.name, []).append(file_path)
+                        self._directories.setdefault(
+                            self.all_images_label, []).append(file_path)
+
+    def set_wallpaper(self):
+        self.get_wallpapers()
+        try:
+            directory = list(self._directories.keys())[self._dir_index]
+        except IndexError:
+            self._dir_index = 0
+
+        images = self._directories[directory]
+
+        if not images:
+            self.text = "Empty"
+            return
+
+        try:
+            if self.random:
+                self._image_index = rand.randint(0, len(images) - 1)
+            else:
+                self._image_index = self._image_index % len(images)
+
+            cur_image = images[self._image_index]
+        except IndexError:
+            self._image_index = 0
+            cur_image = images[self._image_index]
+
+        if self.label is None:
+            cur_image_basename = os.path.basename(cur_image)
+            cur_image_basename = (
+                f'{cur_image_basename[:7]}...'
+                if len(cur_image_basename) > 7 else cur_image_basename)
+            self.text = f'{directory}: {os.path.basename(cur_image)}'
+        else:
+            self.text = self.label
+
+        if self.wallpaper_command:
+            self.wallpaper_command.append(cur_image)
+            subprocess.call(self.wallpaper_command)
+            self.wallpaper_command.pop()
+            return
+        command = [
+            'feh',
+            '--bg-fill',
+            cur_image
+        ]
+        if self.one_screen:
+            command.append("--no-xinerama")
+        subprocess.call(command)
+
+    def button_press(self, x, y, button):
+        if button == BUTTON_LEFT:
+            self._image_index += 1
+        elif button == BUTTON_RIGHT:
+            self._image_index -= 1
+        elif button == BUTTON_UP:
+            self._dir_index += 1
+        elif button == BUTTON_DOWN:
+            self._dir_index -= 1
+
+        self.set_wallpaper()
+        self.draw()
 
 
 class ScreenLockIndicator(widget.GenPollText):
@@ -653,6 +765,13 @@ screens = [
                 widget.WindowName(for_current_screen=True),
                 ScreenLockIndicator(
                     foreground='FF000D',
+                ),
+                widget.TextBox('WP:'),
+                WallpaperDir(
+                    wallpaper_command='nitrogen --set-scaled --save'.split(),
+                    directory=os.path.expanduser('~/Pictures/wallpapers/'),
+                    random=True,
+                    foreground=extension_defaults.foreground,
                 ),
                 widget.TextBox('Vol:'),
                 widget.Volume(
