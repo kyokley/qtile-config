@@ -147,7 +147,7 @@ class WallpaperDir(widget.base._TextBox):
             cur_image_basename = (
                 f'{cur_image_basename[:7]}...'
                 if len(cur_image_basename) > 7 else cur_image_basename)
-            self.text = f'{directory}: {os.path.basename(cur_image)}'
+            self.text = f'{directory}: {cur_image_basename}'
         else:
             self.text = self.label
 
