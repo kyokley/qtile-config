@@ -727,23 +727,9 @@ for i in groups:
         Key([MOD, SHIFT], i.name, lazy.window.togroup(i.name)),
     ])
 
-layouts = [
-    layout.MonadTall(name='Tall',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     ),
-    layout.MonadWide(name='Wide',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     ),
-    layout.TreeTab(name='Max'),
-]
-
 ExtensionDefault = namedtuple(
     'ExtensionDefault',
-    'font fontsize padding foreground background inactive_foreground')
+    'font fontsize padding foreground background inactive_foreground border_focus border_normal')
 extension_defaults = ExtensionDefault(
     font='sans',
     fontsize=12,
@@ -751,7 +737,44 @@ extension_defaults = ExtensionDefault(
     foreground='AE4CFF',
     background=None,
     inactive_foreground='404040',
+    border_focus='FF0000',
+    border_normal='030303',
 )
+
+layouts = [
+    layout.MonadTall(name='GapsTall',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     margin=50,
+                     border_normal=extension_defaults.border_normal,
+                     border_focus=extension_defaults.border_focus,
+                     ),
+    layout.MonadWide(name='GapsWide',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     margin=50,
+                     border_normal=extension_defaults.border_normal,
+                     border_focus=extension_defaults.border_focus,
+                     ),
+    layout.TreeTab(name='Max'),
+    layout.MonadTall(name='Tall',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     border_normal=extension_defaults.border_normal,
+                     border_focus=extension_defaults.border_focus,
+                     ),
+    layout.MonadWide(name='Wide',
+                     new_at_current=True,
+                     border_width=6,
+                     single_border_width=2,
+                     border_normal=extension_defaults.border_normal,
+                     border_focus=extension_defaults.border_focus,
+                     ),
+    layout.TreeTab(name='Max'),
+]
 
 screens = [
     Screen(
