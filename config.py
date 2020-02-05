@@ -120,7 +120,7 @@ class WallpaperDir(ScheduledWidget):
     ]
 
     def __init__(self, **config):
-        super().__init__(width=bar.CALCULATED, **config)
+        super().__init__(**config)
         self.add_defaults(WallpaperDir.defaults)
 
         self._directories = dict()
