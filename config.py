@@ -89,7 +89,7 @@ class ScheduledWidget(widget.GenPollText):
         return lambda: None
 
     def _schedule_job(self, interval):
-        schedule.every(interval).minute.at(':00').do(self._job())
+        schedule.every(interval).minutes.at(':00').do(self._job())
 
     def _poll_func(self):
         schedule.run_pending()
@@ -116,10 +116,10 @@ class WallpaperDir(ScheduledWidget):
         ("label", None, "Use a fixed label instead of image name."),
         ("all_images_label", "All", "Label to use for all images"),
         ("middle_click_command", None, "Command to run for middle-click"),
-        ('interval', 15, 'Run every interval minutes'),
     ]
 
     def __init__(self, **config):
+        config['interval'] = 15
         super().__init__(**config)
         self.add_defaults(WallpaperDir.defaults)
 
