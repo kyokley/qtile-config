@@ -116,7 +116,7 @@ class WallpaperDir(ScheduledWidget):
         ("label", None, "Use a fixed label instead of image name."),
         ("all_images_label", "All", "Label to use for all images"),
         ("middle_click_command", None, "Command to run for middle-click"),
-        ('interval', 1, 'Run every interval minutes'),
+        ('interval', 15, 'Run every interval minutes'),
     ]
 
     def __init__(self, **config):
