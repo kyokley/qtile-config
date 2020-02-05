@@ -33,6 +33,7 @@ import functools
 import json
 import multiprocessing
 import shlex
+import schedule
 
 from datetime import datetime, timedelta
 from dateutil import tz
@@ -66,30 +67,72 @@ KRILL_CMD = (
 BUTTON_UP = 4
 BUTTON_DOWN = 5
 BUTTON_LEFT = 1
+BUTTON_MIDDLE = 2
 BUTTON_RIGHT = 3
 
 
-class WallpaperDir(widget.base._TextBox):
+class ScheduledWidget(widget.GenPollText):
     defaults = [
-        ("directory", "~/Pictures/wallpapers/", "Wallpaper Directory"),
-        ("wallpaper_command", None, "Wallpaper command"),
-        ("random", False, "If set, use random initial wallpaper and "
-         "randomly cycle through the wallpapers."),
-        ("label", None, "Use a fixed label instead of image name."),
-        ("all_images_label", "All", "Label to use for all images"),
-        ("right_click_command", None, "Command to run for right-click"),
+        ('interval', 1, 'Run every interval minutes'),
     ]
 
     def __init__(self, **config):
-        super().__init__('Empty', width=bar.CALCULATED, **config)
+        config['func'] = self._poll_func
+        config['update_interval'] = 1
+        super().__init__(**config)
+        self.add_defaults(ScheduledWidget.defaults)
+
+        self._schedule_job(self.interval)
+        self.text = ''
+
+    def _job(self):
+        return lambda: None
+
+    def _schedule_job(self, interval):
+        schedule.every(interval).minute.at(':00').do(self._job())
+
+    def _poll_func(self):
+        schedule.run_pending()
+        return self.text
+
+    def update(self, text):
+        if self.text != text:
+            self.text = text
+            # If our width hasn't changed, we just draw ourselves. Otherwise,
+            # we draw the whole bar.
+
+            if self.layout:
+                old_width = self.layout.width
+                if self.layout.width == old_width:
+                    self.draw()
+                else:
+                    self.bar.draw()
+
+
+class WallpaperDir(ScheduledWidget):
+    defaults = [
+        ("directory", "~/Pictures/wallpapers/", "Wallpaper Directory"),
+        ("wallpaper_command", None, "Wallpaper command"),
+        ("label", None, "Use a fixed label instead of image name."),
+        ("all_images_label", "All", "Label to use for all images"),
+        ("middle_click_command", None, "Command to run for middle-click"),
+        ('interval', 1, 'Run every interval minutes'),
+    ]
+
+    def __init__(self, **config):
+        super().__init__(width=bar.CALCULATED, **config)
         self.add_defaults(WallpaperDir.defaults)
 
         self._directories = dict()
         self._dir_index = 0
         self._image_index = 0
         self._cur_image = None
+
+        self.text = 'N/A'
         self.set_wallpaper()
-        self.draw()
+
+    def _job(self):
+        return self.set_wallpaper
 
     @staticmethod
     def _is_image(path):
@@ -121,7 +164,7 @@ class WallpaperDir(widget.base._TextBox):
                         self._directories.setdefault(
                             self.all_images_label, []).append(file_path)
 
-    def set_wallpaper(self):
+    def set_wallpaper(self, use_random=True):
         self.get_wallpapers()
         try:
             directory = list(self._directories.keys())[self._dir_index]
@@ -132,11 +175,11 @@ class WallpaperDir(widget.base._TextBox):
         images = self._directories[directory]
 
         if not images:
-            self.text = "Empty"
+            self.update('Empty')
             return
 
         try:
-            if self.random:
+            if use_random:
                 self._image_index = rand.randint(0, len(images) - 1)
             else:
                 self._image_index = self._image_index % len(images)
@@ -151,44 +194,46 @@ class WallpaperDir(widget.base._TextBox):
             cur_image_basename = (
                 f'{cur_image_basename[:7]}...'
                 if len(cur_image_basename) > 7 else cur_image_basename)
-            self.text = f'{directory}: {cur_image_basename}'
+            text = f'{directory}: {cur_image_basename}'
         else:
-            self.text = self.label
+            text = self.label
 
         if self.wallpaper_command:
             self.wallpaper_command.append(self._cur_image)
             subprocess.call(self.wallpaper_command)
             self.wallpaper_command.pop()
-            return
+        else:
+            command = [
+                'feh',
+                '--bg-fill',
+                self._cur_image
+            ]
+            if self.one_screen:
+                command.append("--no-xinerama")
+            subprocess.call(command)
 
-        command = [
-            'feh',
-            '--bg-fill',
-            self._cur_image
-        ]
-        if self.one_screen:
-            command.append("--no-xinerama")
-        subprocess.call(command)
-        self.update(self.text)
+        print(f'Update text to {text}')
+        self.update(text)
 
     def button_press(self, x, y, button):
+        print(button)
         if button == BUTTON_LEFT:
             self._image_index += 1
-            self.set_wallpaper()
-        elif button == BUTTON_RIGHT and self.right_click_command:
+            self.set_wallpaper(use_random=False)
+        elif button == BUTTON_RIGHT:
+            self._image_index -= 1
+            self.set_wallpaper(use_random=False)
+        elif button == BUTTON_MIDDLE and self.middle_click_command:
             command = shlex.split(
-                self.right_click_command)
+                self.middle_click_command)
             command.append(self._cur_image)
-            print(command)
             subprocess.call(command)
         elif button == BUTTON_UP:
             self._dir_index += 1
-            self.set_wallpaper()
+            self.set_wallpaper(use_random=False)
         elif button == BUTTON_DOWN:
             self._dir_index -= 1
-            self.set_wallpaper()
-
-        self.draw()
+            self.set_wallpaper(use_random=False)
 
 
 class ScreenLockIndicator(widget.GenPollText):
@@ -787,9 +832,8 @@ screens = [
                 widget.TextBox('WP:'),
                 WallpaperDir(
                     wallpaper_command='nitrogen --set-scaled --save'.split(),
-                    right_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
+                    middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
                     directory=os.path.expanduser('~/Pictures/wallpapers/'),
-                    random=True,
                     foreground=extension_defaults.foreground,
                 ),
                 widget.TextBox('Vol:'),

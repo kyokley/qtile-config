@@ -3,3 +3,4 @@ python-dateutil
 xcffib
 pillow
 pywal
+schedule
