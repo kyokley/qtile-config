@@ -198,19 +198,34 @@ class WallpaperDir(ScheduledWidget):
         else:
             text = self.label
 
+        num_displays = int(subprocess.check_output(
+            'xrandr | grep connected -w | wc -l', shell=True).strip())
+
         if self.wallpaper_command:
             self.wallpaper_command.append(self._cur_image)
             subprocess.call(self.wallpaper_command)
             self.wallpaper_command.pop()
         else:
             command = [
-                'feh',
-                '--bg-fill',
-                self._cur_image
+                'nitrogen',
+                '--head=0',
+                '--set-scaled',
+                '--save',
+                self._cur_image,
             ]
-            if self.one_screen:
-                command.append("--no-xinerama")
             subprocess.call(command)
+
+            if num_displays > 1:
+                for i in range(1, num_displays):
+                    command = [
+                        'nitrogen',
+                        f'--head={i}',
+                        '--random',
+                        '--set-scaled',
+                        '--save',
+                        os.path.dirname(self._cur_image),
+                    ]
+                    subprocess.call(command)
 
         print(f'Update text to {text}')
         self.update(text)
@@ -831,7 +846,6 @@ screens = [
                 ),
                 widget.TextBox('WP:'),
                 WallpaperDir(
-                    wallpaper_command='nitrogen --set-scaled --save'.split(),
                     middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
                     directory=os.path.expanduser('~/Pictures/wallpapers/'),
                     foreground=extension_defaults.foreground,
