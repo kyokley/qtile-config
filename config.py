@@ -73,7 +73,7 @@ BUTTON_RIGHT = 3
 
 class ScheduledWidget(widget.GenPollText):
     defaults = [
-        ('interval', 1, 'Run every interval minutes'),
+        ('interval', .5, 'Run every interval minutes'),
     ]
 
     def __init__(self, **config):
