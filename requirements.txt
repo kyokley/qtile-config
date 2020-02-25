@@ -4,3 +4,8 @@ xcffib
 pillow
 pywal
 schedule
+cffi
+xcffib
+cairocffi
+qtile
+six
