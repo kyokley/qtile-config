@@ -27,9 +27,7 @@ $HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
                                             xcffib \
                                             cairocffi
 
-$HOME/.pyenv/versions/qtile/bin/pip install six \
-                                            qtile \
-                                            -r requirements.txt
+$HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
 if [ ! -h "~/.config/qtile" ]
 then
