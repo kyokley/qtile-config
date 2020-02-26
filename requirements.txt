@@ -9,3 +9,4 @@ xcffib
 cairocffi
 qtile
 six
+psutil
