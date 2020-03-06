@@ -871,7 +871,9 @@ screens = [
                 widget.TextBox('Cpu:'),
                 MaxCPUGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Net:'),
-                widget.NetGraph(graph_color=extension_defaults.foreground),
+                widget.Net(foreground=extension_defaults.foreground,
+                           interface='wlp0s20f3',
+                           update_interval=2),
                 widget.TextBox('U:'),
                 widget.CheckUpdates(
                          display_format='{updates}',
