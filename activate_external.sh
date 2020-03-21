@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "Running" || sudo intel-virtual-output && echo "Started intel-virtual-output" && sleep 1
+ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "intel-virtual-output already running" || sudo intel-virtual-output && echo "Started intel-virtual-output" && sleep 1
 
 echo "Activating fake resolution"
 xrandr --output VIRTUAL3 --right-of eDP1 --mode 1680x1050
