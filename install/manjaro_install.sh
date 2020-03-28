@@ -2,7 +2,7 @@
 
 set -e
 
-PY3=3.6.7
+PY3=3.7.7
 
 docker ps
 
@@ -18,6 +18,7 @@ cp -r ./rofi ~/.config/rofi
 
 xdg-mime default Thunar.desktop inode/directory
 
+pyenv virtualenv-delete $PY3 qtile
 pyenv virtualenv $PY3 qtile
 
 $HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
@@ -27,15 +28,12 @@ $HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
 
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
-if [ ! -h "~/.config/qtile" ]
-then
-    ln -s "$(pwd)" ~/.config/qtile
-fi
+ln -ns "$(pwd)" ~/.config/qtile
 
-if [ ! -h "~/.config/compton" ]
-then
-    ln -s "$(pwd)/compton" ~/.config/compton
-fi
+# Picom is a fork of compton but aliases itself to compton for
+# backwards compatibility. Update all references to picom once
+# all distros have been updated.
+ln -ns "$(pwd)/compton" ~/.config/compton
 
 if [ ! -h "/usr/share/xsessions/qtile.desktop" ]
 then
@@ -48,7 +46,7 @@ docker pull kyokley/vt
 pamac build i3lock-color
 xset dpms 600 600 600
 
-virtualenv -p python3 /tmp/gcal_env
+python3 -m venv /tmp/gcal_env
 /tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
 /tmp/gcal_env/bin/gcalcli agenda
 rm -rf /tmp/gcal_env
