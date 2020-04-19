@@ -982,9 +982,3 @@ wmname = "LG3D"
 def autostart():
     script = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([script])
-
-    subprocess.call(
-        shlex.split(
-            "compton -b --config {}".format(
-                os.path.expanduser("~/.config/compton/compton.conf"))
-        ))
