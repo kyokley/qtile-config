@@ -41,7 +41,15 @@ from pathlib import Path
 
 from collections import namedtuple
 
-from libqtile.config import Key, Screen, Group, Drag, Click, Match
+from libqtile.config import (Key,
+                             Screen,
+                             Group,
+                             Drag,
+                             Click,
+                             Match,
+                             ScratchPad,
+                             DropDown,
+                             )
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
 
@@ -745,10 +753,24 @@ keys = [
     # Brightness Controls
     Key([], 'XF86MonBrightnessUp', lazy.spawn("xbacklight -inc 10")),
     Key([], 'XF86MonBrightnessDown', lazy.spawn("xbacklight -dec 10")),
-    Key([], 'XF86Tools', lazy.spawn("kb-light")),
+
+    Key([MOD], 'F11', lazy.group['scratchpad'].dropdown_toggle('term')),
+    Key([MOD], 'F12', lazy.group['scratchpad'].dropdown_toggle('qshell')),
 ]
 
-groups = [Group(i) for i in "1234"]
+
+groups = [
+    ScratchPad("scratchpad", [
+        # define a drop down terminal.
+        # it is placed in the upper third of screen by default.
+        DropDown("term", "terminator", opacity=0.8),
+
+        # define another terminal exclusively for qshell at different position
+        DropDown("qshell", "terminator -e qshell",
+                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
+                 on_focus_lost_hide=True)]),
+]
+groups.extend([Group(i) for i in "1234"])
 groups.extend([Group('5',
                      matches=[Match(wm_class=['LibreOffice'])],
                      label='5:LO',
