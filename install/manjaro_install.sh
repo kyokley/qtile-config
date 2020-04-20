@@ -2,7 +2,7 @@
 
 set -e
 
-PY3=3.7.7
+PY3=3.8.2
 
 docker ps
 
