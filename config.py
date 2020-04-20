@@ -230,7 +230,18 @@ for i in groups:
 
 ExtensionDefault = namedtuple(
     'ExtensionDefault',
-    'font fontsize padding foreground background inactive_foreground border_focus border_normal')
+    ['font',
+     'fontsize',
+     'padding',
+     'foreground',
+     'background',
+     'inactive_foreground',
+     'border_focus',
+     'border_normal',
+     'layout_margin',
+     'bar_margin',
+     'bar_thickness',
+     ])
 extension_defaults = ExtensionDefault(
     font='sans',
     fontsize=12,
@@ -240,6 +251,9 @@ extension_defaults = ExtensionDefault(
     inactive_foreground='404040',
     border_focus='FF0000',
     border_normal='030303',
+    layout_margin=40,
+    bar_margin=10,
+    bar_thickness=30,
 )
 
 layouts = [
@@ -247,7 +261,7 @@ layouts = [
                      new_at_current=True,
                      border_width=6,
                      single_border_width=2,
-                     margin=50,
+                     margin=extension_defaults.layout_margin,
                      border_normal=extension_defaults.border_normal,
                      border_focus=extension_defaults.border_focus,
                      ),
@@ -255,7 +269,7 @@ layouts = [
                      new_at_current=True,
                      border_width=6,
                      single_border_width=2,
-                     margin=50,
+                     margin=extension_defaults.layout_margin,
                      border_normal=extension_defaults.border_normal,
                      border_focus=extension_defaults.border_focus,
                      ),
@@ -299,8 +313,6 @@ screens = [
                 widget.DF(visible_on_warn=False,
                           foreground=extension_defaults.foreground,
                           format='{p}: {r:.0f}%'),
-                widget.TextBox('Busy:'),
-                widget.HDDBusyGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Mem:'),
                 widget.MemoryGraph(graph_color=extension_defaults.foreground),
                 widget.TextBox('Cpu:'),
@@ -341,7 +353,8 @@ screens = [
                     format='%a %b %d %H:%M:%S',
                     ),
             ],
-            24,
+            extension_defaults.bar_thickness,
+            margin=extension_defaults.bar_margin,
         ),
         bottom=bar.Bar(
             [
@@ -367,7 +380,8 @@ screens = [
                      debug=False,
                      ),
             ],
-            24,
+            extension_defaults.bar_thickness,
+            margin=extension_defaults.bar_margin,
         )
     ),
 ]
