@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PY3=3.7.7
+PY3=3.8.2
 
 sudo aptitude install libxcb-render0-dev \
                       libffi-dev \
