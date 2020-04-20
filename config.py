@@ -655,7 +655,6 @@ PERIOD = 'period'
 COMMA = 'comma'
 ENTER = 'Return'
 
-
 keys = [
     # Switch between windows in current stack pane
     # Key([MOD], "j", lazy.layout.next()),
@@ -763,10 +762,13 @@ groups = [
     ScratchPad("scratchpad", [
         # define a drop down terminal.
         # it is placed in the upper third of screen by default.
-        DropDown("term", "terminator", opacity=0.8),
+        DropDown("term",
+                 "kitty --directory \"~\"",
+                 opacity=0.8,
+                 on_focus_lost_hide=True),
 
         # define another terminal exclusively for qshell at different position
-        DropDown("qshell", "terminator -e qshell",
+        DropDown("qshell", "kitty bash -c 'qshell'",
                  x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
                  on_focus_lost_hide=True)]),
 ]
@@ -807,6 +809,9 @@ groups.extend([Group('5',
                ])
 
 for i in groups:
+    if i.name == 'scratchpad':
+        continue
+
     keys.extend([
         # mod1 + letter of group = switch to group
         Key([MOD], i.name, lazy.group[i.name].toscreen()),
@@ -896,6 +901,8 @@ screens = [
                 widget.TextBox('Net:'),
                 widget.Net(foreground=extension_defaults.foreground,
                            interface='wlp0s20f3',
+                           # format='{interface}: {down} ↓↑ {up}',
+                           format='{down} ↓↑ {up}',
                            update_interval=2),
                 widget.TextBox('U:'),
                 widget.CheckUpdates(
