@@ -100,8 +100,10 @@ keys = [
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
+
+    # Open a new terminal
+    # Key([MOD, SHIFT], ENTER, lazy.spawn("kitty -1")),
     Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
-    # Key([MOD], "space", lazy.spawn("terminator")),
 
     # Toggle between different layouts as defined below
     Key([MOD], SPACE, lazy.next_layout()),
@@ -177,7 +179,9 @@ groups.extend([Group('5',
                      label='5:LO',
                      ),
                Group('6',
-                     matches=[Match(wm_class=['vivaldi-stable']),
+                     matches=[Match(wm_class=['vivaldi']),
+                              Match(wm_class=['Vivaldi']),
+                              Match(wm_class=['vivaldi-stable']),
                               Match(wm_class=['Vivaldi-stable']),
                               Match(wm_class=['google-chrome']),
                               Match(wm_class=['Google-chrome']),
@@ -249,7 +253,6 @@ layouts = [
                      border_normal=extension_defaults.border_normal,
                      border_focus=extension_defaults.border_focus,
                      ),
-    layout.TreeTab(name='Max'),
 ]
 
 screens = SCREENS
@@ -290,6 +293,7 @@ floating_layout = layout.Floating(float_rules=[
                                   border_focus='FF0000')
 auto_fullscreen = True
 focus_on_window_activation = "smart"
+bring_front_click = True
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the

@@ -12,7 +12,7 @@ pamac install rofi \
               xcb-util-xrm \
               xautolock \
               kitty \
-              compton
+              picom
 
 cp -r ./rofi ~/.config/rofi
 

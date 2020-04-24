@@ -11,6 +11,7 @@ sudo aptitude install libxcb-render0-dev \
                       nitrogen \
                       xautolock \
                       compton
+# compton should be replaced with picom as soon as it is added to ubuntu repos
 
 cp -r ./rofi ~/.config/rofi
 
