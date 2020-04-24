@@ -180,7 +180,9 @@ groups = [
 
         DropDown("browser", "firefox",
                  opacity=0.9,
-                 on_focus_lost_hide=True)]),
+                 on_focus_lost_hide=True,
+                 height=.5,
+                 )]),
 ]
 groups.extend([Group(i) for i in "1234"])
 groups.extend([Group('5',
