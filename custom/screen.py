@@ -55,7 +55,7 @@ if machine_os == OS.Ubuntu:
     top_widgets.extend([widget.TextBox('U:'),
                         widget.CheckUpdates(
                             display_format='{updates}',
-                            distro='ubuntu',
+                            distro='Ubuntu',
                             foreground=extension_defaults.foreground,
                             colour_no_updates=extension_defaults.foreground,
                             colour_have_updates=extension_defaults.foreground,
