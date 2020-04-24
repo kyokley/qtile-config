@@ -27,10 +27,7 @@
 import os
 import subprocess
 
-from collections import namedtuple
-
 from libqtile.config import (Key,
-                             Screen,
                              Group,
                              Drag,
                              Click,
@@ -39,24 +36,14 @@ from libqtile.config import (Key,
                              DropDown,
                              )
 from libqtile.command import lazy
-from libqtile import layout, bar, widget, hook
-from custom.widget import (WallpaperDir,
-                           ScreenLockIndicator,
-                           Weather,
-                           VT,
-                           GCal,
-                           Krill,
-                           MaxCPUGraph,
-                           )
-from custom.layout import ScreenLayout
+from libqtile import layout, hook
+from custom.default import extension_defaults
+from custom.screen import SCREENS
 
 try:
     from typing import List  # noqa: F401
 except ImportError:
     pass
-
-
-PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
 
 
 MOD = "mod1"
@@ -182,7 +169,9 @@ groups = [
 
         DropDown("browser", "firefox",
                  opacity=0.9,
-                 on_focus_lost_hide=True)]),
+                 on_focus_lost_hide=True,
+                 height=.5,
+                 )]),
 ]
 groups.extend([Group(i) for i in "1234"])
 groups.extend([Group('5',
@@ -232,34 +221,6 @@ for i in groups:
         Key([MOD, SHIFT], i.name, lazy.window.togroup(i.name)),
     ])
 
-ExtensionDefault = namedtuple(
-    'ExtensionDefault',
-    ['font',
-     'fontsize',
-     'padding',
-     'foreground',
-     'background',
-     'inactive_foreground',
-     'border_focus',
-     'border_normal',
-     'layout_margin',
-     'bar_margin',
-     'bar_thickness',
-     ])
-extension_defaults = ExtensionDefault(
-    font='sans',
-    fontsize=12,
-    padding=3,
-    foreground='AE4CFF',
-    background=None,
-    inactive_foreground='404040',
-    border_focus='FF0000',
-    border_normal='030303',
-    layout_margin=40,
-    bar_margin=10,
-    bar_thickness=30,
-)
-
 layouts = [
     layout.MonadTall(name='GapsTall',
                      new_at_current=True,
@@ -294,103 +255,7 @@ layouts = [
                      ),
 ]
 
-screens = [
-    Screen(
-        top=bar.Bar(
-            [
-                widget.WindowName(for_current_screen=True),
-                ScreenLockIndicator(
-                    foreground='FF000D',
-                ),
-                widget.TextBox('WP:'),
-                WallpaperDir(
-                    middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
-                    directory=os.path.expanduser('~/Pictures/wallpapers/'),
-                    foreground=extension_defaults.foreground,
-                ),
-                widget.TextBox('Vol:'),
-                widget.Volume(
-                          foreground=extension_defaults.foreground,
-                          ),
-                widget.TextBox('Disk:'),
-                widget.DF(visible_on_warn=False,
-                          foreground=extension_defaults.foreground,
-                          format='{p}: {r:.0f}%'),
-                widget.DF(visible_on_warn=False,
-                          partition='/home',
-                          foreground=extension_defaults.foreground,
-                          format='{p}: {r:.0f}%'),
-                widget.TextBox('Mem:'),
-                widget.MemoryGraph(graph_color=extension_defaults.foreground),
-                widget.TextBox('Cpu:'),
-                MaxCPUGraph(graph_color=extension_defaults.foreground),
-                widget.TextBox('Net:'),
-                widget.Net(foreground=extension_defaults.foreground,
-                           interface='wlp0s20f3',
-                           # format='{interface}: {down} ↓↑ {up}',
-                           format='{down} ↓↑ {up}',
-                           update_interval=2),
-                widget.TextBox('U:'),
-                widget.CheckUpdates(
-                         display_format='{updates}',
-                         distro='Arch',
-                         foreground=extension_defaults.foreground,
-                         colour_no_updates=extension_defaults.foreground,
-                         colour_have_updates=extension_defaults.foreground,
-                         update_interval=3600,  # Update every hour
-                    ),
-                widget.TextBox('Bat:'),
-                widget.Battery(energy_now_file='charge_now',
-                               energy_full_file='charge_full',
-                               power_now_file='current_now',
-                               low_percentage=.3,
-                               foreground=extension_defaults.foreground,
-                               format='{percent:2.0%}',
-                               ),
-                widget.BatteryIcon(),
-                widget.TextBox('W:'),
-                Weather(
-                        normal_foreground=extension_defaults.foreground,
-                        update_interval=3600,  # Update every hour
-                        ),
-                widget.Systray(),
-                widget.Clock(
-                    foreground='FFDE3B',
-                    format='%a %b %d %H:%M:%S',
-                    ),
-            ],
-            extension_defaults.bar_thickness,
-            margin=extension_defaults.bar_margin,
-        ),
-        bottom=bar.Bar(
-            [
-                widget.GroupBox(
-                    this_current_screen_border=extension_defaults.foreground,
-                    this_screen_border=extension_defaults.inactive_foreground,
-                    other_current_screen_border=extension_defaults.foreground,
-                    other_screen_border=extension_defaults.inactive_foreground,
-                    ),
-                widget.Spacer(length=10),
-                ScreenLayout(width=bar.STRETCH),
-                widget.TextBox('Krl:'),
-                Krill(foreground=extension_defaults.foreground,
-                      sources_file='~/workspace/krill_feed/sources.txt',
-                      update_interval=21),
-                widget.TextBox('VT:'),
-                VT(update_interval=10,
-                   foreground=extension_defaults.foreground,
-                   ),
-                widget.TextBox('Cal:'),
-                GCal(update_interval=11,
-                     default_foreground=extension_defaults.foreground,
-                     debug=False,
-                     ),
-            ],
-            extension_defaults.bar_thickness,
-            margin=extension_defaults.bar_margin,
-        )
-    ),
-]
+screens = SCREENS
 
 # Drag floating layouts.
 mouse = [
