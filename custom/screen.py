@@ -16,7 +16,7 @@ from custom.utils import OS, determine_os
 
 PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
 
-BATTERY_PATH = Path('/sys/class/power_supply/')
+BATTERY_PATH = Path('/sys/class/power_supply/BAT0')
 
 top_widgets = [
     widget.WindowName(for_current_screen=True),
