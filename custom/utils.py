@@ -1,5 +1,6 @@
-from enum import Enum, auto
 import platform
+import subprocess
+from enum import Enum, auto
 
 
 class OS(Enum):
@@ -15,3 +16,12 @@ def determine_os():
         return OS.Manjaro
     else:
         return OS.Other
+
+
+def mount_exists(mount_point):
+    cmd = f'df -h | tail -n +2 | grep -w "{mount_point}"'
+    try:
+        subprocess.check_call(cmd, shell=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False

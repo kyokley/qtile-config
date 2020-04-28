@@ -12,11 +12,13 @@ from custom.widget import (WallpaperDir,
 from custom.default import extension_defaults
 from libqtile.config import Screen
 from custom.layout import ScreenLayout
-from custom.utils import OS, determine_os
+from custom.utils import OS, determine_os, mount_exists
 
 PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
 
 BATTERY_PATH = Path('/sys/class/power_supply/BAT0')
+HOME_DIR = '/home'
+ROOT_DIR = '/'
 
 top_widgets = [
     widget.WindowName(for_current_screen=True),
@@ -36,7 +38,20 @@ top_widgets = [
     widget.TextBox('Disk:'),
     widget.DF(visible_on_warn=False,
               foreground=extension_defaults.foreground,
-              format='{p}: {r:.0f}%'),
+              format='{p}: {r:.0f}%',
+              partition=ROOT_DIR),
+]
+
+if mount_exists(HOME_DIR):
+    top_widgets.append(
+        widget.DF(visible_on_warn=False,
+                  foreground=extension_defaults.foreground,
+                  format='{p}: {r:.0f}%',
+                  partition=HOME_DIR,
+                  )
+    )
+
+top_widgets.extend([
     widget.TextBox('Mem:'),
     widget.MemoryGraph(graph_color=extension_defaults.foreground),
     widget.TextBox('Cpu:'),
@@ -47,7 +62,7 @@ top_widgets = [
                # format='{interface}: {down} ↓↑ {up}',
                format='{down} ↓↑ {up}',
                update_interval=2),
-]
+])
 
 machine_os = determine_os()
 
