@@ -12,6 +12,8 @@ pamac install rofi \
               xcb-util-xrm \
               xautolock \
               kitty \
+              terminator \
+              brave \
               picom
 
 cp -r ./rofi ~/.config/rofi
