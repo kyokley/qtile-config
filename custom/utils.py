@@ -1,3 +1,4 @@
+import shlex
 import platform
 import subprocess
 from enum import Enum, auto
@@ -10,9 +11,28 @@ class OS(Enum):
 
 
 def determine_os():
-    if 'debian' in platform.platform().lower():
+    try:
+        lsb_info = subprocess.check_output(shlex.split('lsb_release -d'))
+        lsb_info = str(lsb_info).lower()
+    except subprocess.CalledProcessError:
+        lsb_info = ''
+
+    is_debian = 'debian' in lsb_info or 'ubuntu' in lsb_info
+    is_arch = 'arch' in lsb_info or 'manjaro' in lsb_info
+
+    if is_debian:
         return OS.Ubuntu
-    elif 'manjaro' in platform.platform().lower():
+    elif is_arch:
+        return OS.Manjaro
+
+    platform_description = platform.platform().lower()
+
+    is_debian = 'debian' in platform_description or 'ubuntu' in platform_description
+    is_arch = 'arch' in platform_description or 'manjaro' in platform_description
+
+    if is_debian:
+        return OS.Ubuntu
+    elif is_arch:
         return OS.Manjaro
     else:
         return OS.Other
