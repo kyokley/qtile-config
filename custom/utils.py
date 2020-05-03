@@ -4,6 +4,13 @@ import subprocess
 from enum import Enum, auto
 
 
+POSSIBLE_BROWSERS = ('brave',
+                     'vivaldi',
+                     'google-chrome',
+                     'firefox',
+                     )
+
+
 class OS(Enum):
     Ubuntu = auto()
     Manjaro = auto()
@@ -36,6 +43,21 @@ def determine_os():
         return OS.Manjaro
     else:
         return OS.Other
+
+
+def _which_browser(browser):
+    try:
+        return subprocess.check_output(shlex.split(f'which {browser}')).strip().decode()
+    except subprocess.CalledProcessError:
+        return None
+
+
+def determine_browser():
+    for browser in POSSIBLE_BROWSERS:
+        exe_path = _which_browser(browser)
+        if exe_path:
+            return exe_path
+    return 'firefox'
 
 
 def mount_exists(mount_point):

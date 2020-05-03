@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from dateutil import tz
 from pathlib import Path
 from collections import namedtuple
+from custom.utils import determine_browser
 
 from libqtile import widget
 
@@ -33,6 +34,8 @@ GCAL_CMD = ('docker run --rm '
 KRILL_CMD = (
     'docker run --rm --cpus=.25 kyokley/krill-feed '
     'krill++ -S /app/sources.txt --snapshot')
+
+KRILL_BROWSER = determine_browser()
 
 
 class ScheduledWidget(widget.GenPollText):
@@ -530,8 +533,7 @@ class Krill(CachedProxyRequest):
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
-            self.qtile.cmd_spawn('vivaldi {}'.format(
-                self._current_item['link']))
+            self.qtile.cmd_spawn(f'{KRILL_BROWSER} {self._current_item["link"]}')
         elif button in (BUTTON_UP, BUTTON_DOWN):
             if self._data:
                 if button == BUTTON_UP:
