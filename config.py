@@ -39,122 +39,12 @@ from libqtile.command import lazy
 from libqtile import layout, hook
 from custom.default import extension_defaults
 from custom.screen import SCREENS
+from custom.keys import KEYS, MOD, SHIFT
 
 try:
     from typing import List  # noqa: F401
 except ImportError:
     pass
-
-
-MOD = "mod1"
-SHIFT = 'shift'
-CONTROL = 'control'
-SPACE = 'space'
-PERIOD = 'period'
-COMMA = 'comma'
-ENTER = 'Return'
-
-keys = [
-    # Switch between windows in current stack pane
-    # Key([MOD], "j", lazy.layout.next()),
-    # Key([MOD], "k", lazy.layout.previous()),
-
-    # lazy.layout.next and layout.lazy.previous don't cycle through
-    # floating windows. next_window and prev_window do but they may break
-    # for setups with multiple screens. I'm leaving this until I can test.
-    Key([MOD], "j", lazy.group.next_window()),
-    Key([MOD], "k", lazy.group.prev_window()),
-
-    Key([MOD], "h", lazy.layout.shrink_main()),
-    Key([MOD], "l", lazy.layout.grow_main()),
-
-    Key([MOD, SHIFT], "h", lazy.layout.shrink()),
-    Key([MOD, SHIFT], "l", lazy.layout.grow()),
-
-    Key([MOD], "n", lazy.layout.normalize()),
-    Key([MOD], "m", lazy.layout.maximize()),
-
-    # Move windows up or down in current stack
-    Key([MOD, SHIFT], "j", lazy.layout.shuffle_down()),
-    Key([MOD, SHIFT], "k", lazy.layout.shuffle_up()),
-    Key([MOD], ENTER, lazy.layout.swap_main()),
-
-    # Multi-monitor support
-    Key([MOD], "w", lazy.to_screen(0)),
-    Key([MOD], "e", lazy.to_screen(1)),
-
-    # Swap main pane
-    Key([MOD], "f", lazy.layout.flip()),
-    Key([MOD, SHIFT], "f", lazy.window.toggle_fullscreen()),
-
-    # Floating
-    Key([MOD], "t", lazy.window.toggle_floating()),
-
-    # Switch window focus to other pane(s) of stack
-    # Key([MOD], "space", lazy.layout.next()),
-
-    # Swap panes of split stack
-    # Key([MOD, SHIFT], "space", lazy.layout.rotate()),
-
-    # Toggle between split and unsplit sides of stack.
-    # Split = all windows displayed
-    # Unsplit = 1 window displayed, like Max layout, but still with
-    # multiple stack panes
-
-    # Open a new terminal
-    # Key([MOD, SHIFT], ENTER, lazy.spawn("kitty -1")),
-    Key([MOD, SHIFT], ENTER, lazy.spawn("terminator")),
-
-    # Toggle between different layouts as defined below
-    Key([MOD], SPACE, lazy.next_layout()),
-    Key([MOD, SHIFT], "c", lazy.window.kill()),
-
-    Key([MOD, CONTROL], "r", lazy.restart()),
-    Key([MOD, CONTROL], "q", lazy.shutdown()),
-    Key([MOD, CONTROL], "l", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/force_lock.sh')])),
-    Key([MOD, CONTROL], "d", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/toggle_autolock.sh')])),
-    Key([MOD, CONTROL], "c", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/toggle_compton.sh')])),
-    Key([MOD], "p", lazy.spawn(
-        "rofi -show combi"
-    )),
-
-    # Spotify Commands
-    # NEXT
-    Key([MOD, CONTROL], 'n', lazy.spawn(
-        [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "n"])),
-    Key([MOD, CONTROL], PERIOD, lazy.spawn(
-        [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "n"])),
-
-    # PREV
-    Key([MOD, CONTROL], 'p', lazy.spawn(
-        [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "p"])),
-    Key([MOD, CONTROL], COMMA, lazy.spawn(
-        [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "p"])),
-
-    # PAUSE
-    Key([MOD, CONTROL], SPACE, lazy.spawn(
-        [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "pause"])),
-
-    # Volume Controls
-    Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
-    Key([], 'XF86AudioLowerVolume', lazy.spawn('amixer -q set Master 10%-')),
-    Key([], 'XF86AudioMute', lazy.spawn('amixer -q set Master toggle')),
-
-    # Brightness Controls
-    Key([], 'XF86MonBrightnessUp', lazy.spawn("xbacklight -inc 10")),
-    Key([], 'XF86MonBrightnessDown', lazy.spawn("xbacklight -dec 10")),
-
-    Key([MOD], 'F11', lazy.group['scratchpad'].dropdown_toggle('term')),
-    Key([MOD], 'F12', lazy.group['scratchpad'].dropdown_toggle('browser')),
-]
 
 
 groups = [
@@ -211,16 +101,17 @@ groups.extend([Group('5',
                Group('0'),
                ])
 
-for i in groups:
-    if i.name == 'scratchpad':
+keys = KEYS
+for group in groups:
+    if group.name == 'scratchpad':
         continue
 
     keys.extend([
         # mod1 + letter of group = switch to group
-        Key([MOD], i.name, lazy.group[i.name].toscreen()),
+        Key([MOD], group.name, lazy.group[group.name].toscreen()),
 
         # mod1 + shift + letter = switch to & move focused window to group
-        Key([MOD, SHIFT], i.name, lazy.window.togroup(i.name)),
+        Key([MOD, SHIFT], group.name, lazy.window.togroup(group.name)),
     ])
 
 layouts = [
