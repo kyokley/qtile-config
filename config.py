@@ -24,9 +24,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-import subprocess
 
+from pathlib import Path
 from libqtile.config import (Key,
                              Group,
                              Drag,
@@ -39,6 +38,7 @@ from libqtile.command import lazy
 from libqtile import layout, hook
 from custom.default import extension_defaults
 from custom.screen import SCREENS
+from custom.utils import run_command
 from custom.keys import KEYS, MOD, SHIFT
 
 try:
@@ -201,5 +201,16 @@ wmname = "LG3D"
 
 @hook.subscribe.startup_once
 def autostart():
-    script = os.path.expanduser('~/.config/qtile/autostart.sh')
-    subprocess.call([script])
+    run_command('nitrogen --restore')
+    run_command('nm-applet')
+    run_command('blueman-applet', raise_called_process_exception=False)
+
+    locker_path = Path('~/.config/qtile/force_lock.sh')
+    run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
+
+    compton_path = Path("~/.config/compton/compton.conf")
+    run_command(f'compton -b --config "{compton_path.expanduser()}"')
+    run_command('xset dpms 600 600 600')
+
+    # Disable screensaver
+    run_command('xset s off')
