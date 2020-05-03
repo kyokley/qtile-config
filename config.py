@@ -27,80 +27,23 @@
 
 from pathlib import Path
 from libqtile.config import (Key,
-                             Group,
                              Drag,
                              Click,
-                             Match,
-                             ScratchPad,
-                             DropDown,
                              )
 from libqtile.command import lazy
 from libqtile import layout, hook
-from custom.default import extension_defaults
 from custom.screen import SCREENS
 from custom.utils import run_command
 from custom.keys import KEYS, MOD, SHIFT
+from custom.groups import GROUPS
+from custom.layout import LAYOUTS
 
 try:
     from typing import List  # noqa: F401
 except ImportError:
     pass
 
-
-groups = [
-    ScratchPad("scratchpad", [
-        # define a drop down terminal.
-        # it is placed in the upper third of screen by default.
-        DropDown("term",
-                 "kitty --directory \"~\"",
-                 opacity=0.9,
-                 on_focus_lost_hide=True,
-                 ),
-
-        DropDown("browser", "firefox",
-                 opacity=0.9,
-                 on_focus_lost_hide=True,
-                 height=.5,
-                 )]),
-]
-groups.extend([Group(i) for i in "1234"])
-groups.extend([Group('5',
-                     matches=[Match(wm_class=['LibreOffice'])],
-                     label='5:LO',
-                     ),
-               Group('6',
-                     matches=[Match(wm_class=['vivaldi']),
-                              Match(wm_class=['Vivaldi']),
-                              Match(wm_class=['vivaldi-stable']),
-                              Match(wm_class=['Vivaldi-stable']),
-                              Match(wm_class=['brave-browser']),
-                              Match(wm_class=['Brave-browser']),
-                              Match(wm_class=['google-chrome']),
-                              Match(wm_class=['Google-chrome']),
-                              ],
-                     label='6:Web',
-                     ),
-               Group('7',
-                     matches=[Match(wm_class=['spotify']),
-                              Match(wm_class=['Spotify']),
-                              ],
-                     label='7:Music',
-                     ),
-               Group('8',
-                     matches=[Match(wm_class=['Pidgin']),
-                              Match(wm_class=['Slack']),
-                              Match(wm_class=['Microsoft Teams - Preview']),
-                              ],
-                     label='8:Chat',
-                     ),
-               Group('9',
-                     matches=[Match(wm_class=['Thunderbird']),
-                              ],
-                     label='9:Email',
-                     ),
-               Group('0'),
-               ])
-
+groups = GROUPS
 keys = KEYS
 for group in groups:
     if group.name == 'scratchpad':
@@ -114,40 +57,7 @@ for group in groups:
         Key([MOD, SHIFT], group.name, lazy.window.togroup(group.name)),
     ])
 
-layouts = [
-    layout.MonadTall(name='GapsTall',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     margin=extension_defaults.layout_margin,
-                     border_normal=extension_defaults.border_normal,
-                     border_focus=extension_defaults.border_focus,
-                     ),
-    layout.MonadWide(name='GapsWide',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     margin=extension_defaults.layout_margin,
-                     border_normal=extension_defaults.border_normal,
-                     border_focus=extension_defaults.border_focus,
-                     ),
-    layout.TreeTab(name='Max'),
-    layout.MonadTall(name='Tall',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     border_normal=extension_defaults.border_normal,
-                     border_focus=extension_defaults.border_focus,
-                     ),
-    layout.MonadWide(name='Wide',
-                     new_at_current=True,
-                     border_width=6,
-                     single_border_width=2,
-                     border_normal=extension_defaults.border_normal,
-                     border_focus=extension_defaults.border_focus,
-                     ),
-]
-
+layouts = LAYOUTS
 screens = SCREENS
 
 # Drag floating layouts.
