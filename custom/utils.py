@@ -69,6 +69,13 @@ def mount_exists(mount_point):
         return False
 
 
-def run_command(cmd_str):
+def run_command(cmd_str, raise_called_process_exception=True):
     cmd = shlex.split(cmd_str)
-    return subprocess.Popen(cmd, shell=False)
+
+    if raise_called_process_exception:
+        return subprocess.Popen(cmd, shell=False)
+    else:
+        try:
+            return subprocess.Popen(cmd, shell=False)
+        except subprocess.CalledProcessError:
+            return None
