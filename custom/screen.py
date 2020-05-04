@@ -27,7 +27,8 @@ top_widgets = [
     ),
     widget.TextBox('WP:'),
     WallpaperDir(
-        middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
+        # middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
+        middle_click_command=None,
         directory=os.path.expanduser('~/Pictures/wallpapers/'),
         foreground=extension_defaults.foreground,
     ),

@@ -205,11 +205,14 @@ class WallpaperDir(ScheduledWidget):
         elif button == BUTTON_RIGHT:
             self._image_index -= 1
             self.set_wallpaper(use_random=False)
-        elif button == BUTTON_MIDDLE and self.middle_click_command:
-            command = shlex.split(
-                self.middle_click_command)
-            command.append(self._cur_image)
-            subprocess.call(command)
+        elif button == BUTTON_MIDDLE:
+            if self.middle_click_command:
+                command = shlex.split(
+                    self.middle_click_command)
+                command.append(self._cur_image)
+                subprocess.call(command)
+            else:
+                self.set_wallpaper(use_random=True)
         elif button == BUTTON_UP:
             self._dir_index += 1
             self.set_wallpaper(use_random=False)
