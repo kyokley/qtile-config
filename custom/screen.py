@@ -91,6 +91,13 @@ elif machine_os == OS.Manjaro:
                         ),
                         ])
 
+top_widgets.extend([
+    widget.TextBox('W:'),
+    Weather(
+        normal_foreground=extension_defaults.foreground,
+        update_interval=3600,  # Update every hour
+    ),
+])
 
 if BATTERY_PATH.exists():
     top_widgets.extend([
@@ -106,11 +113,6 @@ if BATTERY_PATH.exists():
     ])
 
 top_widgets.extend([
-    widget.TextBox('W:'),
-    Weather(
-        normal_foreground=extension_defaults.foreground,
-        update_interval=3600,  # Update every hour
-    ),
     widget.Systray(),
     widget.Clock(
         foreground='FFDE3B',
