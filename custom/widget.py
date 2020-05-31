@@ -32,7 +32,7 @@ GCAL_CMD = ('docker run --rm '
             '-v /home/yokley/.gcalcli_oauth:/root/.gcalcli_oauth '
             'kyokley/gcalcli')
 KRILL_CMD = (
-    'docker run --rm --cpus=.25 kyokley/krill-feed '
+    'docker run --rm --cpus=.25 kyokley/krill '
     'krill++ -S /app/sources.txt --snapshot')
 
 KRILL_BROWSER = determine_browser()
