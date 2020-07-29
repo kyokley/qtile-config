@@ -8,6 +8,7 @@ from custom.widget import (WallpaperDir,
                            GCal,
                            Krill,
                            MaxCPUGraph,
+                           CheckUpdatesWithZero,
                            )
 from custom.default import extension_defaults
 from libqtile.config import Screen
@@ -27,8 +28,6 @@ top_widgets = [
     ),
     widget.TextBox('WP:'),
     WallpaperDir(
-        # middle_click_command=f'{PYTHON_ENV_DIR}/bin/wal -i',
-        middle_click_command=None,
         directory=os.path.expanduser('~/Pictures/wallpapers/'),
         foreground=extension_defaults.foreground,
     ),
@@ -69,7 +68,7 @@ machine_os = determine_os()
 
 if machine_os == OS.Ubuntu:
     top_widgets.extend([widget.TextBox('U:'),
-                        widget.CheckUpdates(
+                        CheckUpdatesWithZero(
                             display_format='{updates}',
                             distro='Ubuntu',
                             foreground=extension_defaults.foreground,
@@ -81,7 +80,7 @@ if machine_os == OS.Ubuntu:
                         ])
 elif machine_os == OS.Manjaro:
     top_widgets.extend([widget.TextBox('U:'),
-                        widget.CheckUpdates(
+                        CheckUpdatesWithZero(
                             display_format='{updates}',
                             distro='Arch',
                             foreground=extension_defaults.foreground,
