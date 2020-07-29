@@ -14,6 +14,7 @@ pamac install rofi \
               kitty \
               terminator \
               brave \
+              xorg-xhost \
               picom
 
 cp -r ./rofi ~/.config/rofi
