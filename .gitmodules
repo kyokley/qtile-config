@@ -1,0 +1,3 @@
+[submodule "SpotifyController"]
+	path = SpotifyController
+	url = git@github.com:kyokley/SpotifyController.git

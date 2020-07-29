@@ -4,6 +4,8 @@ set -e
 
 PY3=3.8.2
 
+git submodule update --init --recursive
+
 docker ps
 
 pamac install rofi \
@@ -15,6 +17,7 @@ pamac install rofi \
               terminator \
               brave \
               xorg-xhost \
+              xdotool \
               picom
 
 cp -r ./rofi ~/.config/rofi
@@ -40,9 +43,9 @@ ln -ns "$(pwd)" ~/.config/qtile
 rm -r ~/.config/compton
 ln -ns "$(pwd)/compton" ~/.config/compton
 
-if [ ! -h "/usr/share/xsessions/qtile.desktop" ]
+if [ ! -f "/usr/share/xsessions/qtile.desktop" ]
 then
-    sudo ln -s $(pwd)/qtile.desktop /usr/share/xsessions/
+    sudo cp $(pwd)/qtile.desktop /usr/share/xsessions/
 fi
 
 docker pull kyokley/vt

@@ -10,6 +10,8 @@ PERIOD = 'period'
 COMMA = 'comma'
 ENTER = 'Return'
 
+QTILE_CONFIG_DIRECTORY = '~/.config/qtile'
+
 KEYS = [
     # Switch between windows in current stack pane
     # Key([MOD], "j", lazy.layout.next()),
@@ -56,11 +58,11 @@ KEYS = [
     Key([MOD, CONTROL], "r", lazy.restart()),
     Key([MOD, CONTROL], "q", lazy.shutdown()),
     Key([MOD, CONTROL], "l", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/force_lock.sh')])),
+        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/force_lock.sh')])),
     Key([MOD, CONTROL], "d", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/toggle_autolock.sh')])),
+        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/toggle_autolock.sh')])),
     Key([MOD, CONTROL], "c", lazy.spawn(
-        [os.path.expanduser('~/.config/qtile/toggle_compton.sh')])),
+        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/toggle_compton.sh')])),
     Key([MOD], "p", lazy.spawn(
         "rofi -show combi"
     )),
@@ -69,23 +71,23 @@ KEYS = [
     # NEXT
     Key([MOD, CONTROL], 'n', lazy.spawn(
         [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "n"])),
+            f"{QTILE_CONFIG_DIRECTORY}/SpotifyController/spotify.sh"), "n"])),
     Key([MOD, CONTROL], PERIOD, lazy.spawn(
         [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "n"])),
+            f"{QTILE_CONFIG_DIRECTORY}/SpotifyController/spotify.sh"), "n"])),
 
     # PREV
     Key([MOD, CONTROL], 'p', lazy.spawn(
         [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "p"])),
+            f"{QTILE_CONFIG_DIRECTORY}/SpotifyController/spotify.sh"), "p"])),
     Key([MOD, CONTROL], COMMA, lazy.spawn(
         [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "p"])),
+            f"{QTILE_CONFIG_DIRECTORY}/SpotifyController/spotify.sh"), "p"])),
 
     # PAUSE
     Key([MOD, CONTROL], SPACE, lazy.spawn(
         [os.path.expanduser(
-            "~/workspace/SpotifyController/spotify.sh"), "pause"])),
+            f"{QTILE_CONFIG_DIRECTORY}/SpotifyController/spotify.sh"), "pause"])),
 
     # Volume Controls
     Key([], 'XF86AudioRaiseVolume', lazy.spawn('amixer -q set Master 10%+')),
