@@ -14,7 +14,8 @@ from pathlib import Path
 from collections import namedtuple
 from custom.utils import determine_browser
 
-from libqtile import widget
+from libqtile.widget.generic_poll_text import GenPollText
+from libqtile.widget.graph import CPUGraph
 
 rand = random.SystemRandom()
 
@@ -38,7 +39,7 @@ KRILL_CMD = (
 KRILL_BROWSER = determine_browser()
 
 
-class ScheduledWidget(widget.GenPollText):
+class ScheduledWidget(GenPollText):
     defaults = [
         ('interval', .5, 'Run every interval minutes'),
     ]
@@ -221,7 +222,7 @@ class WallpaperDir(ScheduledWidget):
             self.set_wallpaper(use_random=False)
 
 
-class ScreenLockIndicator(widget.GenPollText):
+class ScreenLockIndicator(GenPollText):
     defaults = [
         ('update_interval', 10, 'Update interval'),
     ]
@@ -244,7 +245,7 @@ class ScreenLockIndicator(widget.GenPollText):
         return ''
 
 
-class CachedProxyRequest(widget.GenPollText):
+class CachedProxyRequest(GenPollText):
     defaults = [
         ('http_proxy', None, 'HTTP proxy to use for requests'),
         ('https_proxy', None, 'HTTPS proxy to use for requests'),
@@ -549,10 +550,10 @@ class Krill(CachedProxyRequest):
                         seconds=self.update_interval)
 
 
-class MaxCPUGraph(widget.CPUGraph):
+class MaxCPUGraph(CPUGraph):
     def __init__(self, **config):
         self._num_cores = multiprocessing.cpu_count()
-        widget.CPUGraph.__init__(self, **config)
+        CPUGraph.__init__(self, **config)
         self.oldvalues = self._getvalues()
 
     def _getvalues(self):
