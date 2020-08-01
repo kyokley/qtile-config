@@ -532,7 +532,7 @@ class Krill(CachedProxyRequest):
             self._last_item_change_time = datetime.now()
         return (self._current_item['title']
                 if isinstance(self._current_item, dict)
-                else self._current_item)[:100]
+                else self._current_item)
 
     def _fetch(self):
         cmd = shlex.split(KRILL_CMD)
