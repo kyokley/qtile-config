@@ -38,6 +38,7 @@ KRILL_CMD = (
     'krill++ -S /app/sources.txt --snapshot')
 
 KRILL_BROWSER = determine_browser()
+MAX_KRILL_LENGTH = 100
 
 
 class ScheduledWidget(GenPollText):
@@ -66,10 +67,13 @@ class ScheduledWidget(GenPollText):
 
     def update(self, text):
         if self.text != text:
+            if self.layout:
+                old_width = self.layout.width
+
             self.text = text
+
             # If our width hasn't changed, we just draw ourselves. Otherwise,
             # we draw the whole bar.
-
             if self.layout:
                 old_width = self.layout.width
                 if self.layout.width == old_width:
@@ -503,6 +507,7 @@ class GCal(CachedProxyRequest):
 
 class Krill(CachedProxyRequest):
     defaults = [('sources_file', None, 'File containing sources'),
+                ('markup', False, 'Do not use pango markup'),
                 ]
 
     def __init__(self, **config):
@@ -527,7 +532,7 @@ class Krill(CachedProxyRequest):
             self._last_item_change_time = datetime.now()
         return (self._current_item['title']
                 if isinstance(self._current_item, dict)
-                else self._current_item)
+                else self._current_item)[:100]
 
     def _fetch(self):
         cmd = shlex.split(KRILL_CMD)
@@ -549,6 +554,14 @@ class Krill(CachedProxyRequest):
                 self.update(self._current_item['title'])
                 self._last_item_change_time = datetime.now() + timedelta(
                         seconds=self.update_interval)
+
+    def update(self, text):
+        if len(text) > MAX_KRILL_LENGTH:
+            truncated_text = f'{text[:MAX_KRILL_LENGTH]}...'
+        else:
+            truncated_text = text
+
+        super().update(truncated_text)
 
 
 class MaxCPUGraph(CPUGraph):
