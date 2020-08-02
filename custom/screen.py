@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from libqtile import bar, widget
 from custom.widget import (WallpaperDir,
@@ -18,8 +17,10 @@ from custom.utils import OS, determine_os, mount_exists
 PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
 
 BATTERY_PATH = Path('/sys/class/power_supply/BAT0')
+WALLPAPER_DIR = Path('~/Pictures/wallpapers')
 HOME_DIR = '/home'
 ROOT_DIR = '/'
+TERM = 'terminator'
 
 top_widgets = [
     widget.WindowName(for_current_screen=True),
@@ -28,7 +29,7 @@ top_widgets = [
     ),
     widget.TextBox('WP:'),
     WallpaperDir(
-        directory=os.path.expanduser('~/Pictures/wallpapers/'),
+        directory=WALLPAPER_DIR.expanduser(),
         foreground=extension_defaults.foreground,
     ),
     widget.TextBox('Vol:'),
@@ -39,7 +40,9 @@ top_widgets = [
     widget.DF(visible_on_warn=False,
               foreground=extension_defaults.foreground,
               format='{p}: {r:.0f}%',
-              partition=ROOT_DIR),
+              partition=ROOT_DIR,
+              mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx ncdu {ROOT_DIR}')},
+              ),
 ]
 
 if mount_exists(HOME_DIR):
@@ -48,14 +51,17 @@ if mount_exists(HOME_DIR):
                   foreground=extension_defaults.foreground,
                   format='{p}: {r:.0f}%',
                   partition=HOME_DIR,
+                  mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx ncdu {HOME_DIR}')},
                   )
     )
 
 top_widgets.extend([
     widget.TextBox('Mem:'),
-    widget.MemoryGraph(graph_color=extension_defaults.foreground),
+    widget.MemoryGraph(graph_color=extension_defaults.foreground,
+                       mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx htop')}),
     widget.TextBox('Cpu:'),
-    MaxCPUGraph(graph_color=extension_defaults.foreground),
+    MaxCPUGraph(graph_color=extension_defaults.foreground,
+                mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx htop')}),
     widget.TextBox('Net:'),
     widget.Net(foreground=extension_defaults.foreground,
                interface='wlp0s20f3',
