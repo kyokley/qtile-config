@@ -622,14 +622,12 @@ class CheckUpdatesWithZero(CheckUpdates):
                 self.subtr = 0
         except subprocess.CalledProcessError:
             updates = ""
-            num_updates = len(updates.splitlines()) - self.subtr
 
-            if num_updates == 0:
-                return "0"
-            num_updates = str(num_updates)
+        num_updates = len(updates.splitlines()) - self.subtr
+        num_updates = str(num_updates)
 
-            if self.restart_indicator and os.path.exists('/var/run/reboot-required'):
-                num_updates += self.restart_indicator
+        if self.restart_indicator and os.path.exists('/var/run/reboot-required'):
+            num_updates += self.restart_indicator
 
-            self._set_colour(num_updates)
-            return self.display_format.format(**{"updates": num_updates})
+        self._set_colour(num_updates)
+        return self.display_format.format(**{"updates": num_updates})
