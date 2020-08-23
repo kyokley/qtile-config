@@ -89,6 +89,9 @@ elif machine_os == OS.Manjaro:
                         CheckUpdatesWithZero(
                             display_format='{updates}',
                             distro='Arch',
+                            custom_command=(r'''
+pamac checkupdates | tail -n +2 | awk 'BEGIN{RS="\n\n"; FS=OFS="\n"} NR==1 {print $0}'
+                            '''),
                             foreground=extension_defaults.foreground,
                             colour_no_updates=extension_defaults.foreground,
                             colour_have_updates=extension_defaults.foreground,
