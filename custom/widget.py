@@ -321,6 +321,7 @@ class Weather(CachedProxyRequest):
         ('low_foreground', '18BAEB', 'Low foreground'),
         ('normal_foreground', 'FFDE3B', 'Normal foreground'),
         ('high_foreground', 'FF000D', 'High foreground'),
+        ('markup', False, 'Do not use pango markup'),
         ]
 
     def __init__(self, **config):
@@ -357,9 +358,13 @@ class Weather(CachedProxyRequest):
 class VT(CachedProxyRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)') # noqa
 
+    defaults = [('markup', False, 'Do not use pango markup'),
+                ]
+
     def __init__(self, **config):
         config['func'] = self.get_vt
         super().__init__(**config)
+        self.add_defaults(VT.defaults)
         self._current_item = None
 
     def get_vt(self):
@@ -406,6 +411,7 @@ class GCal(CachedProxyRequest):
     defaults = [
         ('default_foreground', 'FFDE3B', 'Default foreground color'),
         ('soon_foreground', 'FF000D', 'Color used for events occuring soon'),
+        ('markup', False, 'Do not use pango markup'),
         ]
 
     def __init__(self, **config):
