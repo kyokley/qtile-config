@@ -90,7 +90,7 @@ elif machine_os == OS.Manjaro:
                             display_format='{updates}',
                             distro='Arch',
                             custom_command=(r'''
-pamac checkupdates | awk 'BEGIN{RS="\n\n";FS=OFS="\n"} NR==1 {print $0}' | awk 'NR==1 {if($0!~/available/){exit}} NR>1 {print $0}'
+pamac checkupdates | awk 'BEGIN{RS="\n\n";FS=OFS="\n"} NR==1 {print $0}' | awk 'NR==1 {if($0!~/available/){exit}} NR>1 {print $0}' | grep -v "^$"
                             '''),
                             foreground=extension_defaults.foreground,
                             colour_no_updates=extension_defaults.foreground,
