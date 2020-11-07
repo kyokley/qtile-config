@@ -1,0 +1,8 @@
+configuration {
+	modi: "run,window,ssh,combi";
+	show-icons: true;
+	combi-modi: "run,window";
+	fake-background: "background";
+	theme: "Pop-Dark";
+	kb-cancel: "Escape,Control+c,Control+bracketleft";
+}

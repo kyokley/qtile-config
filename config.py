@@ -113,6 +113,7 @@ wmname = "LG3D"
 def autostart():
     run_command('nitrogen --restore')
     run_command('nm-applet')
+    run_command('dunst', raise_called_process_exception=False)
     run_command('blueman-applet', raise_called_process_exception=False)
 
     locker_path = Path('~/.config/qtile/force_lock.sh')

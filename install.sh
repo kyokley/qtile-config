@@ -4,7 +4,7 @@ set -e
 
 PY3=3.8.2
 
-USE_PAMAC=$(which apt-get >/dev/null 2>&1 && echo "true")
+USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
 USE_APT_GET=$(which apt-get >/dev/null 2>&1 && echo "true")
 
 git submodule update --init --recursive
@@ -22,7 +22,8 @@ then
                   terminator \
                   brave \
                   xorg-xhost \
-                  picom
+                  picom \
+                  dunst
 fi
 
 if [ -n $USE_APT_GET ]
@@ -39,7 +40,7 @@ then
                           compton
 fi
 
-cp -r ./rofi ~/.config/rofi
+cp -r ./rofi ~/.config/
 
 xdg-mime default Thunar.desktop inode/directory
 
