@@ -40,7 +40,7 @@ then
                           compton
 fi
 
-cp -r ./rofi ~/.config/
+ln -s $(pwd)/rofi ~/.config
 
 xdg-mime default Thunar.desktop inode/directory
 
