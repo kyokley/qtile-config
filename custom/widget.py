@@ -378,7 +378,13 @@ class VT(CachedProxyRequest):
 
     def _fetch(self):
         cmd = shlex.split(VT_CMD)
-        proc = subprocess.check_output(cmd)
+
+        try:
+            proc = subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            self._print(str(e))
+            return [b'Failed to load']
+
         if proc:
             lines = [b' '.join(x.strip().split()[1:])
                      for x in proc.splitlines()
