@@ -286,6 +286,8 @@ class CachedProxyRequest(GenPollText):
                         minutes=self.cache_expiration) < datetime.now()):
                 self._print('Getting data')
                 self._cached_data = self._fetch()
+                self._print('Got:')
+                self._print(self._cached_data)
                 self._last_update = datetime.now()
         except Exception as e:
             self._print('Got error')
@@ -359,6 +361,7 @@ class VT(CachedProxyRequest):
     REGEX = re.compile(b'(?<=\x1b\[95m).*?(?=\x1b\[39m)') # noqa
 
     defaults = [('markup', False, 'Do not use pango markup'),
+                ('debug', False, 'Enable additional debugging'),
                 ]
 
     def __init__(self, **config):
@@ -377,12 +380,10 @@ class VT(CachedProxyRequest):
         cmd = shlex.split(VT_CMD)
         proc = subprocess.check_output(cmd)
         if proc:
-            lines = [VT.REGEX.search(x).group().strip()
+            lines = [b' '.join(x.strip().split()[1:])
                      for x in proc.splitlines()
-                     if (x and
-                         x.strip() and
-                         VT.REGEX.search(x) and
-                         VT.REGEX.search(x).group().strip())]
+                     if x and x.strip()]
+            self._print(lines)
             return lines
         return [b'Failed to load']
 
@@ -514,6 +515,7 @@ class GCal(CachedProxyRequest):
 class Krill(CachedProxyRequest):
     defaults = [('sources_file', None, 'File containing sources'),
                 ('markup', False, 'Do not use pango markup'),
+                ('debug', False, 'Enable additional debugging'),
                 ]
 
     def __init__(self, **config):
@@ -549,7 +551,8 @@ class Krill(CachedProxyRequest):
 
     def button_press(self, x, y, button):
         if button == BUTTON_LEFT:
-            self.qtile.cmd_spawn(f'{KRILL_BROWSER} {self._current_item["link"]}')
+            if self._current_item and self._current_item.get('link'):
+                self.qtile.cmd_spawn(f'{KRILL_BROWSER} {self._current_item["link"]}')
         elif button in (BUTTON_UP, BUTTON_DOWN):
             if self._data:
                 if button == BUTTON_UP:
