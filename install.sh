@@ -4,6 +4,7 @@ set -e
 
 PY3=3.8.2
 
+HAS_PYENV=$(which pyenv >/dev/null 2>&1 && echo "true")
 USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
 USE_APT_GET=$(which apt-get >/dev/null 2>&1 && echo "true")
 
@@ -22,22 +23,22 @@ then
                   terminator \
                   brave \
                   xorg-xhost \
-                  picom \
                   dunst
+    pamac build picom-jonaburg-git
 fi
 
 if [ -n $USE_APT_GET ]
 then
-    sudo aptitude install libxcb-render0-dev \
-                          libffi-dev \
-                          libcairo2-dev \
-                          libpangocairo-1.0-0 \
-                          thunar \
-                          rofi \
-                          nitrogen \
-                          xautolock \
-                          terminator \
-                          compton
+    sudo apt-get install libxcb-render0-dev \
+                         libffi-dev \
+                         libcairo2-dev \
+                         libpangocairo-1.0-0 \
+                         thunar \
+                         rofi \
+                         nitrogen \
+                         xautolock \
+                         terminator \
+                         compton
 fi
 
 ln -s $(pwd)/rofi ~/.config
@@ -63,7 +64,8 @@ bash ~/.config/qtile/SpotifyController/install.sh
 # backwards compatibility. Update all references to picom once
 # all distros have been updated.
 rm -r ~/.config/compton
-ln -ns "$(pwd)/compton" ~/.config/compton
+rm -r ~/.config/picom
+ln -ns "$(pwd)/picom" ~/.config/picom
 
 if [ ! -f "/usr/share/xsessions/qtile.desktop" ]
 then
@@ -84,22 +86,22 @@ then
     git clone https://github.com/PandorasFox/i3lock-color.git /tmp/i3lock-color
     cd /tmp/i3lock-color
     git checkout $(git describe --tags --abbrev=0)
-    sudo aptitude install -y libev-dev \
-                             libxcb-composite0 \
-                             libxcb-composite0-dev \
-                             libxcb-xinerama0 \
-                             libxcb-xinerama0-dev \
-                             libxcb-xkb-dev \
-                             libxcb-image0-dev \
-                             libxcb-util-dev \
-                             libxkbcommon-x11-dev \
-                             libjpeg-turbo8-dev \
-                             libpam0g-dev \
-                             libxcb-randr0 \
-                             libxcb-randr0-dev \
-                             libxkbcommon-dev \
-                             libxcb-xrm-dev \
-                             autoconf
+    sudo apt-get install -y libev-dev \
+                            libxcb-composite0 \
+                            libxcb-composite0-dev \
+                            libxcb-xinerama0 \
+                            libxcb-xinerama0-dev \
+                            libxcb-xkb-dev \
+                            libxcb-image0-dev \
+                            libxcb-util-dev \
+                            libxkbcommon-x11-dev \
+                            libjpeg-turbo8-dev \
+                            libpam0g-dev \
+                            libxcb-randr0 \
+                            libxcb-randr0-dev \
+                            libxkbcommon-dev \
+                            libxcb-xrm-dev \
+                            autoconf
     autoreconf -i && ./configure && make && sudo make install
     cd "$cur_dir"
     rm -rf /tmp/i3lock-color

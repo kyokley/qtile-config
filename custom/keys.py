@@ -62,7 +62,7 @@ KEYS = [
     Key([MOD, CONTROL], "d", lazy.spawn(
         [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/toggle_autolock.sh')])),
     Key([MOD, CONTROL], "c", lazy.spawn(
-        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/toggle_compton.sh')])),
+        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/toggle_picom.sh')])),
     Key([MOD], "p", lazy.spawn(
         "rofi -show combi"
     )),

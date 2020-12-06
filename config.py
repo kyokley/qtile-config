@@ -119,8 +119,8 @@ def autostart():
     locker_path = Path('~/.config/qtile/force_lock.sh')
     run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
 
-    compton_path = Path("~/.config/compton/compton.conf")
-    run_command(f'compton -b --config "{compton_path.expanduser()}"')
+    picom_path = Path("~/.config/picom/picom.conf")
+    run_command(f'picom -b --experimental-backend --config "{picom_path.expanduser()}"')
     run_command('xset dpms 600 600 600')
 
     # Disable screensaver
