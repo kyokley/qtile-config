@@ -49,6 +49,7 @@ pyenv virtualenv-delete -f qtile | true
 pyenv virtualenv $PY3 qtile
 
 $HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
+                                            jinja2 \
                                             cffi \
                                             xcffib \
                                             cairocffi
