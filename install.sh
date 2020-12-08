@@ -38,6 +38,15 @@ then
                          nitrogen \
                          xautolock \
                          terminator \
+                         libx11-xcb-dev \
+                         libxcb-render-util0-dev \
+                         libxcb-damage0-dev \
+                         libxcb-sync-dev \
+                         libxcb-present-dev \
+                         libdbus-1-dev \
+                         uthash-dev \
+                         libconfig-dev \
+                         libgl-dev \
                          ninja-build \
                          meson
     git clone https://github.com/jonaburg/picom /tmp/picom
