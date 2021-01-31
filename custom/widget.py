@@ -29,7 +29,7 @@ BUTTON_RIGHT = 3
 VT_CMD = ('docker run --rm -v /home/yokley/.ssh:/root/.ssh '
           '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
           '--env VT_USERNAME=yokley --env VT_DEFAULT_LIST=personal '
-          '--env VT_PROXY= --net=host kyokley/vt list -qu')
+          '--env VT_PROXY= --net=host kyokley/vt list -quW')
 GCAL_CMD = ('docker run --rm '
             '-v /home/yokley/.gcalcli_oauth:/root/.gcalcli_oauth '
             'kyokley/gcalcli')
