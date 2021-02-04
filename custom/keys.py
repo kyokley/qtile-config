@@ -66,6 +66,9 @@ KEYS = [
     Key([MOD], "p", lazy.spawn(
         "rofi -show combi"
     )),
+    Key([MOD, CONTROL], "j", lazy.spawn(
+        [os.path.expanduser(f'{QTILE_CONFIG_DIRECTORY}/jira-open.sh')]
+    )),
 
     # Spotify Commands
     # NEXT
