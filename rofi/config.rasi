@@ -3,5 +3,6 @@ configuration {
 	show-icons: true;
 	combi-modi: "drun,window";
 	kb-cancel: "Escape,Control+c,Control+bracketleft";
+	drun-match-fields: "name";
 }
 @import "~/.config/rofi/arthur.rasi"
