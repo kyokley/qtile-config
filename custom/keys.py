@@ -38,8 +38,8 @@ KEYS = [
     Key([MOD], ENTER, lazy.layout.swap_main()),
 
     # Multi-monitor support
-    Key([MOD], "w", lazy.to_screen(0)),
-    Key([MOD], "e", lazy.to_screen(1)),
+    Key([MOD], "w", lazy.to_screen(1)),
+    Key([MOD], "e", lazy.to_screen(0)),
 
     # Swap main pane
     Key([MOD], "f", lazy.layout.flip()),
