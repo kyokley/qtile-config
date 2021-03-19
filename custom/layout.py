@@ -6,7 +6,8 @@ from custom.default import extension_defaults
 class ScreenLayout(widget.CurrentLayout):
     def setup_hooks(self):
         def hook_layout_change(layout, group):
-            self.text = layout.name
+            if layout:
+                self.text = layout.name
             self.bar.draw()
         hook.subscribe.layout_change(hook_layout_change)
 

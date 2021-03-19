@@ -624,25 +624,3 @@ class MaxCPUGraph(CPUGraph):
 
         if max_percent:
             self.push(max_percent)
-
-
-class CheckUpdatesWithZero(CheckUpdates):
-    def _check_updates(self):
-        # type: () -> str
-        try:
-            if self.custom_command is None:
-                updates = self.call_process(self.cmd)
-            else:
-                updates = self.call_process(self.custom_command, shell=True)
-                self.subtr = 0
-        except subprocess.CalledProcessError:
-            updates = ""
-
-        num_updates = len(updates.splitlines()) - self.subtr
-        num_updates = str(num_updates)
-
-        if self.restart_indicator and os.path.exists('/var/run/reboot-required'):
-            num_updates += self.restart_indicator
-
-        self._set_colour(num_updates)
-        return self.display_format.format(**{"updates": num_updates})

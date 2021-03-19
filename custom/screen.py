@@ -7,7 +7,6 @@ from custom.widget import (WallpaperDir,
                            GCal,
                            Krill,
                            MaxCPUGraph,
-                           CheckUpdatesWithZero,
                            )
 from custom.default import extension_defaults
 from libqtile.config import Screen
@@ -74,7 +73,7 @@ machine_os = determine_os()
 
 if machine_os == OS.Ubuntu:
     top_widgets.extend([widget.TextBox('U:'),
-                        CheckUpdatesWithZero(
+                        widget.CheckUpdates(
                             display_format='{updates}',
                             distro='Ubuntu',
                             foreground=extension_defaults.foreground,
@@ -82,11 +81,12 @@ if machine_os == OS.Ubuntu:
                             colour_have_updates=extension_defaults.foreground,
                             update_interval=3600,  # update every hour
                             restart_indicator='*',
+                            no_update_string='0',
                         ),
                         ])
 elif machine_os == OS.Manjaro:
     top_widgets.extend([widget.TextBox('U:'),
-                        CheckUpdatesWithZero(
+                        widget.CheckUpdates(
                             display_format='{updates}',
                             distro='Arch',
                             custom_command=(r'''
@@ -96,6 +96,7 @@ pamac checkupdates | awk 'BEGIN{RS="\n\n";FS=OFS="\n"} NR==1 {print $0}' | awk '
                             colour_no_updates=extension_defaults.foreground,
                             colour_have_updates=extension_defaults.foreground,
                             update_interval=3600,  # update every hour
+                            no_update_string='0',
                         ),
                         ])
 
