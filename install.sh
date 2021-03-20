@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -x
 
 PY3=3.9.2
 
@@ -8,11 +8,13 @@ HAS_PYENV=$(which pyenv >/dev/null 2>&1 && echo "true")
 USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
 USE_APT_GET=$(which apt-get >/dev/null 2>&1 && echo "true")
 
+set -e
+
 git submodule update --init --recursive
 
 docker ps
 
-if [ -n $USE_PAMAC ]
+if [ $USE_PAMAC == 'true' ]
 then
     pamac install rofi \
                   thunar-volman \
@@ -27,7 +29,7 @@ then
     pamac build picom-jonaburg-git
 fi
 
-if [ -n $USE_APT_GET ]
+if [ $USE_APT_GET == 'true' ]
 then
     sudo apt-get install libxcb-render0-dev \
                          libffi-dev \
@@ -93,12 +95,12 @@ fi
 docker pull kyokley/vt
 
 # Install i3lock-color
-if [ -n $USE_PAMAC ]
+if [ $USE_PAMAC == 'true' ]
 then
     pamac install i3lock-color
 fi
 
-if [ -n $USE_APT_GET ]
+if [ $USE_APT_GET == 'true' ]
 then
     cur_dir="$(pwd)"
     git clone https://github.com/PandorasFox/i3lock-color.git /tmp/i3lock-color
