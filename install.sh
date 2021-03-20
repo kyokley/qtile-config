@@ -8,8 +8,6 @@ HAS_PYENV=$(which pyenv >/dev/null 2>&1 && echo "true")
 USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
 USE_APT_GET=$(which apt-get >/dev/null 2>&1 && echo "true")
 
-set -e
-
 git submodule update --init --recursive
 
 docker ps
