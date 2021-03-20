@@ -2,7 +2,7 @@
 
 set -e
 
-PY3=3.8.2
+PY3=3.9.2
 
 HAS_PYENV=$(which pyenv >/dev/null 2>&1 && echo "true")
 USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
