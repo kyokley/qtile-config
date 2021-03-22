@@ -8,9 +8,9 @@ function restart_qtile() {
     echo "qtile restarted successfully"
 }
 
-(ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "intel-virtual-output already running" ) || (DISPLAY=:0 intel-virtual-output && echo "Started intel-virtual-output" && sleep 1)
+# (ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "intel-virtual-output already running" ) || (DISPLAY=:0 intel-virtual-output && echo "Started intel-virtual-output" && sleep 1)
 
-VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po 'VIRTUAL\d(?= connected)')
+VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po 'DVI\S+(?= connected)')
 
 if [ $? -ne 0 ]
 then
@@ -25,7 +25,8 @@ echo "VIRTUAL_DISPLAY: " $VIRTUAL_DISPLAY
 PRIMARY_DISPLAY=$(DISPLAY=:0 xrandr -q | grep primary | awk '{print $1}')
 echo "PRIMARY_DISPLAY: " $PRIMARY_DISPLAY
 
-VIRTUAL_MODE=$(DISPLAY=:0 xrandr -q | grep $VIRTUAL_DISPLAY | awk 'NR == 2 {print $1}')
+# VIRTUAL_MODE=$(DISPLAY=:0 xrandr -q | grep $VIRTUAL_DISPLAY | awk 'NR == 2 {print $1}')
+VIRTUAL_MODE=$(DISPLAY=:0 xrandr -q | sed -n "/$VIRTUAL_DISPLAY/,"'$p' | awk 'NR == 2 {print $1}')
 echo "VIRTUAL_MODE: " $VIRTUAL_MODE
 
 # VIRTUAL_RATE=$(DISPLAY=:0 xrandr -q | grep $VIRTUAL_DISPLAY | awk 'NR == 2 {print $NF}' | grep -Po '[0-9.]+')
