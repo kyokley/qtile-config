@@ -1,11 +1,12 @@
 from pathlib import Path
-from libqtile import bar, widget, qtile
+from libqtile import bar, widget
 from custom.widget import (WallpaperDir,
                            ScreenLockIndicator,
                            Weather,
                            VT,
                            GCal,
                            Krill,
+                           MaxCPUGraph,
                            )
 from custom.default import extension_defaults
 from libqtile.config import Screen
@@ -39,7 +40,7 @@ top_widgets = [
               foreground=extension_defaults.foreground,
               format='{p}: {r:.0f}%',
               partition=ROOT_DIR,
-              mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx ncdu {ROOT_DIR}')},
+              mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx ncdu {ROOT_DIR}')},
               ),
 ]
 
@@ -49,20 +50,17 @@ if mount_exists(HOME_DIR):
                   foreground=extension_defaults.foreground,
                   format='{p}: {r:.0f}%',
                   partition=HOME_DIR,
-                  mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx ncdu {HOME_DIR}')},
+                  mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx ncdu {HOME_DIR}')},
                   )
     )
 
 top_widgets.extend([
     widget.TextBox('Mem:'),
     widget.MemoryGraph(graph_color=extension_defaults.foreground,
-                       type='line',
-                       mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')}),
+                       mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx htop')}),
     widget.TextBox('Cpu:'),
-    widget.CPUGraph(graph_color=extension_defaults.foreground,
-                    core='all',
-                    type='line',
-                    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')}),
+    MaxCPUGraph(graph_color=extension_defaults.foreground,
+                mouse_callbacks={'Button1': lambda qtile: qtile.cmd_spawn(f'{TERM} -bx htop')}),
     widget.TextBox('Net:'),
     widget.Net(foreground=extension_defaults.foreground,
                interface='wlp0s20f3',
