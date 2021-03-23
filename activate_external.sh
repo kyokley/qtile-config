@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LEFT_OR_RIGHT='left'
+DISPLAY_PREFIX='DVI'
 
 function restart_qtile() {
     echo "Restarting qtile"
@@ -10,13 +11,22 @@ function restart_qtile() {
 
 # (ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "intel-virtual-output already running" ) || (DISPLAY=:0 intel-virtual-output && echo "Started intel-virtual-output" && sleep 1)
 
-VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po 'DVI\S+(?= connected)')
+VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po "$DISPLAY_PREFIX\S+")
 
 if [ $? -ne 0 ]
 then
     echo 'Could not find external display'
     restart_qtile
     DISPLAY=:0 xset +dpms
+    exit
+fi
+
+DISPLAY=:0 xrandr -q | grep -Po "$DISPLAY_PREFIX\S+(?= disconnected)"
+if [ $? -eq 0 ]
+then
+    echo "$VIRTUAL_DISPLAY is disconnected. Attempting to turn off"
+    DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --off
+    restart_qtile
     exit
 fi
 
