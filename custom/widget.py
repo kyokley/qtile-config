@@ -6,6 +6,7 @@ import schedule
 import os
 import random
 import subprocess
+import multiprocessing
 
 from datetime import datetime, timedelta
 from dateutil import tz
@@ -14,6 +15,7 @@ from collections import namedtuple
 from custom.utils import determine_browser
 
 from libqtile.widget.generic_poll_text import GenPollText
+from libqtile.widget.graph import CPUGraph
 
 rand = random.SystemRandom()
 
