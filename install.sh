@@ -65,12 +65,12 @@ xdg-mime default Thunar.desktop inode/directory
 pyenv virtualenv-delete -f qtile | true
 pyenv virtualenv $PY3 qtile
 
-$HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip \
-                                            jinja2 \
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade pip wheel
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade jinja2 \
                                             cffi \
                                             xcffib \
-                                            cairocffi
-
+                                            dbus-python
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
 rm -r ~/.config/qtile
