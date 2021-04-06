@@ -23,6 +23,8 @@ then
                   terminator \
                   brave \
                   xorg-xhost \
+                  gobject-introspection \
+                  pkgconf \
                   dunst
     pamac build picom-jonaburg-git
 fi
@@ -48,6 +50,12 @@ then
                          libconfig-dev \
                          libgl-dev \
                          ninja-build \
+                         libgirepository1.0-dev \
+                         g++ \
+                         libcairo2-dev \
+                         pkg-config \
+                         python3-dev \
+                         gir1.2-gtk-3.0 \
                          meson
     git clone https://github.com/jonaburg/picom /tmp/picom
     cd /tmp/picom
@@ -70,7 +78,7 @@ $HOME/.pyenv/versions/qtile/bin/pip install --upgrade jinja2 \
                                             cffi \
                                             xcffib \
                                             dbus-python
-$HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi pangocairocffi
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi pangocairocffi pycairo
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
 rm -r ~/.config/qtile

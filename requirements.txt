@@ -10,3 +10,4 @@ cairocffi
 qtile
 six
 psutil
+pygobject
