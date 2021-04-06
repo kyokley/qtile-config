@@ -9,15 +9,12 @@ function restart_qtile() {
     echo "qtile restarted successfully"
 }
 
-# (ps ax | grep intel-virtual-output | grep -v grep >/dev/null && echo "intel-virtual-output already running" ) || (DISPLAY=:0 intel-virtual-output && echo "Started intel-virtual-output" && sleep 1)
-
 VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po "$DISPLAY_PREFIX\S+")
 
 if [ $? -ne 0 ]
 then
     echo 'Could not find external display'
     restart_qtile
-    DISPLAY=:0 xset +dpms
     exit
 fi
 
@@ -57,6 +54,13 @@ echo "Sleeping for 5 secs..."
 sleep 5
 
 restart_qtile
-DISPLAY=:0 xset -dpms
+
+DISPLAY_LINK_CARD=$(pactl list short cards | grep DisplayLink | awk '{print $2}')
+if [ $? -eq 0 ]
+then
+    echo "Found card $DISPLAY_LINK_CARD"
+    echo "Switching $DISPLAY_LINK_CARD to off"
+    pactl set-card-profile "$DISPLAY_LINK_CARD" off
+fi
 
 echo "Done"
