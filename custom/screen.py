@@ -57,10 +57,18 @@ if mount_exists(HOME_DIR):
 top_widgets.extend([
     widget.TextBox('Mem:'),
     widget.MemoryGraph(graph_color=extension_defaults.foreground,
-                       mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')}),
+                       mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')},
+                       samples=40,  # FIX: Weird graph issue where only drawing on left
+                       border_width=2,
+                       border_color='000000',
+                       ),
     widget.TextBox('Cpu:'),
     MaxCPUGraph(graph_color=extension_defaults.foreground,
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')}),
+                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx htop')},
+                samples=40,  # FIX: Weird graph issue where only drawing on left
+                border_width=2,
+                border_color='000000',
+                ),
     widget.TextBox('Net:'),
     widget.Net(foreground=extension_defaults.foreground,
                interface='wlp0s20f3',
