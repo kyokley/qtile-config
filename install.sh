@@ -70,7 +70,7 @@ $HOME/.pyenv/versions/qtile/bin/pip install --upgrade jinja2 \
                                             cffi \
                                             xcffib \
                                             dbus-python
-$HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi
+$HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi pangocairocffi
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
 rm -r ~/.config/qtile
