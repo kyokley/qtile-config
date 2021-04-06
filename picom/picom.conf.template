@@ -12,7 +12,8 @@
 
 transition-length = 1250
 size-transition = true
-
+spawn-center-screen = true
+spawn-center = false
 
 #################################
 #             Corners           #
