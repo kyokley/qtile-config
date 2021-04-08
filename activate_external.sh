@@ -1,11 +1,18 @@
 #!/bin/bash
 
+sleep 1
+
 LEFT_OR_RIGHT='left'
 DISPLAY_PREFIX='DVI'
 
+
 function restart_qtile() {
+    USERS=$(last | grep still | cut -d " " -f1 | uniq)
+
     echo "Restarting qtile"
-    DISPLAY=:0 /home/yokley/.pyenv/versions/qtile/bin/qtile cmd-obj -o cmd -f restart
+    for user in "${USERS}"; do
+        DISPLAY=:0 /home/yokley/.pyenv/versions/qtile/bin/qtile cmd-obj -o cmd -f restart
+    done
     echo "qtile restarted successfully"
 }
 
