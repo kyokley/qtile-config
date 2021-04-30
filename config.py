@@ -117,6 +117,7 @@ def autostart():
     run_command('nm-applet')
     run_command('dunst', raise_called_process_exception=False)
     run_command('blueman-applet', raise_called_process_exception=False)
+    run_command('mntray', raise_called_process_exception=False)
 
     locker_path = Path('~/.config/qtile/force_lock.sh')
     run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
