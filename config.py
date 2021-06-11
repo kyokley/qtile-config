@@ -25,6 +25,7 @@
 # SOFTWARE.
 
 
+from itertools import chain
 from pathlib import Path
 from libqtile.config import (Key,
                              Drag,
@@ -76,24 +77,30 @@ main = None
 follow_mouse_focus = False
 bring_front_click = False
 cursor_warp = False
+float_rule_strs = [
+        'confirm',
+        'dialog',
+        'download',
+        'error',
+        'file_progress',
+        'notification',
+        'splash',
+        'toolbar',
+        'confirmreset',  # gitk
+        'makebranch',  # gitk
+        'maketag',  # gitk
+        'branchdialog',  # gitk
+        'pinentry-gtk-2',  # GPG key password entry
+        'ssh-askpass',  # ssh-askpass
+        'Conky',  # Conky
+]
+
 floating_layout = layout.Floating(
-    float_rules=[
-        Match(wm_class='confirm'),
-        Match(wm_class='dialog'),
-        Match(wm_class='download'),
-        Match(wm_class='error'),
-        Match(wm_class='file_progress'),
-        Match(wm_class='notification'),
-        Match(wm_class='splash'),
-        Match(wm_class='toolbar'),
-        Match(wm_class='confirmreset'),  # gitk
-        Match(wm_class='makebranch'),  # gitk
-        Match(wm_class='maketag'),  # gitk
-        # Match(wm_name='branchdialog'),  # gitk
-        Match(wm_class='pinentry-gtk-2'),  # GPG key password entry
-        Match(wm_class='ssh-askpass'),  # ssh-askpass
-        Match(wm_class='Conky'),  # Conky
-    ],
+    float_rules=chain([Match(wm_class=rule) for rule in float_rule_strs],
+                      [Match(wm_type=rule) for rule in float_rule_strs],
+                      [Match(func=lambda c: c.has_fixed_size()),
+                       Match(func=lambda c: c.has_fixed_ratio())],
+                      ),
     border_width=1,
     border_focus='FF0000')
 auto_fullscreen = True
