@@ -27,8 +27,7 @@
 
 from itertools import chain
 from pathlib import Path
-from libqtile.config import (Key,
-                             Drag,
+from libqtile.config import (Drag,
                              Click,
                              Match,
                              )
@@ -36,8 +35,8 @@ from libqtile.command import lazy
 from libqtile import layout, hook
 from custom.screen import SCREENS
 from custom.utils import run_command
-from custom.keys import KEYS, MOD, SHIFT
-from custom.groups import GROUPS
+from custom.keys import KEYS, MOD
+from custom.groups import GROUPS, GROUP_KEYS
 from custom.layout import LAYOUTS
 
 try:
@@ -47,17 +46,7 @@ except ImportError:
 
 groups = GROUPS
 keys = KEYS
-for group in groups:
-    if group.name in ('scratchpad', 'Proton'):
-        continue
-
-    keys.extend([
-        # mod1 + letter of group = switch to group
-        Key([MOD], group.name, lazy.group[group.name].toscreen()),
-
-        # mod1 + shift + letter = switch to & move focused window to group
-        Key([MOD, SHIFT], group.name, lazy.window.togroup(group.name)),
-    ])
+keys.extend(GROUP_KEYS)
 
 layouts = LAYOUTS
 screens = SCREENS

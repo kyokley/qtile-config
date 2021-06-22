@@ -1,14 +1,14 @@
 import os
 from libqtile.config import Key
 from libqtile.command import lazy
-
-MOD = "mod1"
-SHIFT = 'shift'
-CONTROL = 'control'
-SPACE = 'space'
-PERIOD = 'period'
-COMMA = 'comma'
-ENTER = 'Return'
+from custom.constants import (MOD,
+                              SHIFT,
+                              CONTROL,
+                              SPACE,
+                              PERIOD,
+                              COMMA,
+                              ENTER,
+                              )
 
 QTILE_CONFIG_DIRECTORY = '~/.config/qtile'
 

@@ -2,7 +2,10 @@ from libqtile.config import (Group,
                              Match,
                              ScratchPad,
                              DropDown,
+                             Key,
                              )
+from custom.constants import MOD, SHIFT
+from libqtile.command import lazy
 
 GROUPS = [
     ScratchPad("scratchpad", [
@@ -45,7 +48,6 @@ GROUPS.extend([Group('5',
                Group('8',
                      matches=[Match(wm_class='Pidgin'),
                               Match(wm_class='Slack'),
-                              Match(wm_class='Microsoft Teams - Preview'),
                               ],
                      label='8:Chat',
                      ),
@@ -63,4 +65,24 @@ GROUPS.extend([Group('5',
                      persist=False,
                      label='Proton',
                      ),
+               Group('Teams',
+                     matches=[Match(wm_class='Microsoft Teams - Preview'),
+                              ],
+                     init=False,
+                     persist=False,
+                     label='Teams',
+                     ),
                ])
+
+GROUP_KEYS = []
+for group in GROUPS:
+    if group.name in ('scratchpad', 'Proton', 'Teams'):
+        continue
+
+    GROUP_KEYS.extend([
+        # mod1 + letter of group = switch to group
+        Key([MOD], group.name, lazy.group[group.name].toscreen()),
+
+        # mod1 + shift + letter = switch to & move focused window to group
+        Key([MOD, SHIFT], group.name, lazy.window.togroup(group.name)),
+    ])

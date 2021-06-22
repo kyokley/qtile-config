@@ -77,5 +77,5 @@ def run_command(cmd_str, raise_called_process_exception=True):
     else:
         try:
             return subprocess.Popen(cmd, shell=False)
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             return None
