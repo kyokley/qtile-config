@@ -58,26 +58,20 @@ GROUPS.extend([Group('5',
                      label='9:Email',
                      ),
                Group('0'),
-               Group('Proton',
+               Group('equal',
                      matches=[Match(wm_class='protonmail-bridge'),
                               Match(wm_class='protonvpn'),
+                              Match(wm_class='Microsoft Teams - Preview'),
                               ],
                      init=False,
                      persist=False,
-                     label='Proton',
-                     ),
-               Group('Teams',
-                     matches=[Match(wm_class='Microsoft Teams - Preview'),
-                              ],
-                     init=False,
-                     persist=False,
-                     label='Teams',
+                     label='Exile',
                      ),
                ])
 
 GROUP_KEYS = []
 for group in GROUPS:
-    if group.name in ('scratchpad', 'Proton', 'Teams'):
+    if group.name in ('scratchpad',):
         continue
 
     GROUP_KEYS.extend([
