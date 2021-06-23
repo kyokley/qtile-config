@@ -99,30 +99,30 @@ def lock_screen(event, blur=False):
     else:
         cmd.extend(['-i', '/tmp/.i3lock.png'])  # nosec
 
-    args = shlex.split('''--insidevercolor={clearish}   \
-                          --ringvercolor={verifying}     \
+    args = shlex.split('''--insidever-color={clearish}   \
+                          --ringver-color={verifying}     \
                           \
-                          --insidewrongcolor={clearish} \
-                          --ringwrongcolor={wrong}   \
+                          --insidewrong-color={clearish} \
+                          --ringwrong-color={wrong}   \
                           \
-                          --insidecolor={blank}      \
-                          --ringcolor={default}        \
-                          --linecolor={blank}        \
-                          --separatorcolor={default}   \
+                          --inside-color={blank}      \
+                          --ring-color={default}        \
+                          --line-color={blank}        \
+                          --separator-color={default}   \
                           \
-                          --verifcolor={text}        \
-                          --wrongcolor={text}        \
-                          --timecolor={text}        \
-                          --datecolor={text}        \
-                          --layoutcolor={text}      \
-                          --keyhlcolor={wrong}       \
-                          --bshlcolor={wrong}        \
+                          --verif-color={text}        \
+                          --wrong-color={text}        \
+                          --time-color={text}        \
+                          --date-color={text}        \
+                          --layout-color={text}      \
+                          --keyhl-color={wrong}       \
+                          --bshl-color={wrong}        \
                           \
                           --clock               \
                           --indicator           \
-                          --timestr="%H:%M:%S"  \
-                          --datestr="" \
-                          --wrongtext="FAIL" \
+                          --time-str="%H:%M:%S"  \
+                          --date-str="" \
+                          --wrong-text="FAIL" \
                           --show-failed-attempts \
                           --nofork
                        '''.format(blank=Color.BLANK,
