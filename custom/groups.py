@@ -49,6 +49,7 @@ GROUPS.extend([Group('5',
                Group('8',
                      matches=[Match(wm_class='Pidgin'),
                               Match(wm_class='Slack'),
+                              Match(wm_class='crx_mdpkiolbdkhdjpekfbkbmhigcaggjagi'),  # Google Chat
                               ],
                      label='8:Chat',
                      ),
