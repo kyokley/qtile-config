@@ -39,6 +39,8 @@ KRILL_CMD = (
 KRILL_BROWSER = determine_browser()
 MAX_KRILL_LENGTH = 100
 
+XAUTOLOCK_STATUS_PATH = Path('/tmp/xautolock.status')
+
 
 class ScheduledWidget(GenPollText):
     defaults = [
@@ -238,15 +240,16 @@ class ScreenLockIndicator(GenPollText):
 
     def check_autolock(self):
         try:
-            output = subprocess.check_output(
-                "ps ax | grep xautolock | grep -v grep | awk '{print $1}'",
-                shell=True)
+            with open(XAUTOLOCK_STATUS_PATH, 'r') as f:
+                output = f.read().strip()
 
-            if not output:
+            if output == 'disabled':
                 return 'SL Disabled'
-        except subprocess.CalledProcessError:
-            return 'SL Disabled'
-        return ''
+            elif output == 'enabled':
+                return ''
+        except FileNotFoundError:
+            pass
+        return 'SL Status Unknown'
 
 
 class CachedProxyRequest(GenPollText):

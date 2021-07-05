@@ -119,6 +119,10 @@ def autostart():
     locker_path = Path('~/.config/qtile/force_lock.sh')
     run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
 
+    xautolock_status_path = Path('/tmp/xautolock.status')
+    with open(xautolock_status_path, 'w') as f:
+        f.write('enabled')
+
     run_command('xset dpms 600 600 600')
 
     # Disable screensaver

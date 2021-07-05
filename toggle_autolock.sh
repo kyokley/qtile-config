@@ -1,11 +1,12 @@
 #!/bin/bash
 
-PID=$(ps ax | grep xautolock | grep -v grep | awk '{print $1}')
-RETURN_CODE=$?
+STATUS_FILE_PATH=/tmp/xautolock.status
 
-if [ $RETURN_CODE -eq 0 ] && [ "$PID" != "" ]
+if [ $(cat $STATUS_FILE_PATH 2>/dev/null)'' == 'enabled' ]
 then
-    xautolock -exit
+    xautolock -disable
+    echo 'disabled' > $STATUS_FILE_PATH
 else
-    xautolock -locker "$HOME/.config/qtile/force_lock.sh" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'" &
+    xautolock -enable
+    echo 'enabled' > $STATUS_FILE_PATH
 fi
