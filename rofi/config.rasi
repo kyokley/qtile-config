@@ -5,4 +5,4 @@ configuration {
 	kb-cancel: "Escape,Control+c,Control+bracketleft";
 	drun-match-fields: "name";
 }
-@import "~/.config/rofi/arthur.rasi"
+@import "~/.config/rofi/fancy.rasi"
