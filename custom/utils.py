@@ -5,6 +5,7 @@ from enum import Enum, auto
 
 
 POSSIBLE_BROWSERS = ('brave',
+                     'brave-browser',
                      'vivaldi',
                      'google-chrome',
                      'firefox',
