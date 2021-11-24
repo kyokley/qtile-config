@@ -6,22 +6,11 @@ LEFT_OR_RIGHT='left'
 DISPLAY_PREFIX='DVI'
 
 
-function restart_qtile() {
-    USERS=$(last | grep still | cut -d " " -f1 | uniq)
-
-    echo "Restarting qtile"
-    for user in "${USERS}"; do
-        DISPLAY=:0 /home/yokley/.pyenv/versions/qtile/bin/qtile cmd-obj -o cmd -f restart
-    done
-    echo "qtile restarted successfully"
-}
-
 VIRTUAL_DISPLAY=$(DISPLAY=:0 xrandr -q | grep -Po "$DISPLAY_PREFIX\S+")
 
 if [ $? -ne 0 ]
 then
     echo 'Could not find external display'
-    restart_qtile
     exit
 fi
 
@@ -30,7 +19,6 @@ if [ $? -eq 0 ]
 then
     echo "$VIRTUAL_DISPLAY is disconnected. Attempting to turn off"
     DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --off
-    restart_qtile
     exit
 fi
 
@@ -59,8 +47,6 @@ DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --${LEFT_OR_RIGHT}-of $PRIMARY_DISPL
 
 echo "Sleeping for 5 secs..."
 sleep 5
-
-restart_qtile
 
 DISPLAY_LINK_CARD=$(pactl list short cards | grep DisplayLink | awk '{print $2}')
 if [ $? -eq 0 ]
