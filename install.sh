@@ -8,6 +8,8 @@ HAS_PYENV=$(which pyenv >/dev/null 2>&1 && echo "true")
 USE_PAMAC=$(which pamac >/dev/null 2>&1 && echo "true")
 USE_APT_GET=$(which apt-get >/dev/null 2>&1 && echo "true")
 
+set -e
+
 git submodule update --init --recursive
 
 docker ps
@@ -21,7 +23,7 @@ then
                   xautolock \
                   kitty \
                   terminator \
-                  brave \
+                  brave-bin \
                   xorg-xhost \
                   gobject-introspection \
                   pkgconf \
@@ -66,7 +68,7 @@ then
     cd -
 fi
 
-ln -s $(pwd)/rofi ~/.config
+ln -s $(pwd)/rofi ~/.config | true
 
 xdg-mime default Thunar.desktop inode/directory
 
@@ -89,8 +91,8 @@ bash ~/.config/qtile/SpotifyController/install.sh
 # Picom is a fork of compton but aliases itself to compton for
 # backwards compatibility. Update all references to picom once
 # all distros have been updated.
-rm -r ~/.config/compton
-rm -r ~/.config/picom
+rm -rf ~/.config/compton
+rm -rf ~/.config/picom
 ln -ns "$(pwd)/picom" ~/.config/picom
 
 if [ ! -f "/usr/share/xsessions/qtile.desktop" ]
