@@ -36,12 +36,6 @@ echo "VIRTUAL_MODE: " $VIRTUAL_MODE
 
 echo
 
-echo "Activating fake resolution"
-DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --${LEFT_OR_RIGHT}-of $PRIMARY_DISPLAY --mode 1680x1050
-
-echo "Sleeping for 5 secs..."
-sleep 5
-
 echo "Activating external with resolution $VIRTUAL_MODE"
 DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --${LEFT_OR_RIGHT}-of $PRIMARY_DISPLAY --mode $VIRTUAL_MODE
 
