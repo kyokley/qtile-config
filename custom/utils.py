@@ -13,8 +13,11 @@ POSSIBLE_BROWSERS = ('brave',
 
 
 class OS(Enum):
+    Debian = auto()
     Ubuntu = auto()
     Manjaro = auto()
+    Garuda = auto()
+    Arch = auto()
     Other = auto()
 
 
@@ -25,23 +28,29 @@ def determine_os():
     except subprocess.CalledProcessError:
         lsb_info = ''
 
-    is_debian = 'debian' in lsb_info or 'ubuntu' in lsb_info
-    is_arch = 'arch' in lsb_info or 'manjaro' in lsb_info
-
-    if is_debian:
+    if 'debian' in lsb_info:
+        return OS.Debian
+    elif 'ubuntu' in lsb_info:
         return OS.Ubuntu
-    elif is_arch:
+    elif 'arch' in lsb_info:
+        return OS.Arch
+    elif 'manjaro' in lsb_info:
         return OS.Manjaro
+    elif 'garuda' in lsb_info:
+        return OS.Garuda
 
     platform_description = platform.platform().lower()
 
-    is_debian = 'debian' in platform_description or 'ubuntu' in platform_description
-    is_arch = 'arch' in platform_description or 'manjaro' in platform_description
-
-    if is_debian:
+    if 'debian' in platform_description:
+        return OS.Debian
+    elif 'ubuntu' in platform_description:
         return OS.Ubuntu
-    elif is_arch:
+    elif 'arch' in platform_description:
+        return OS.Arch
+    elif 'manjaro' in platform_description:
         return OS.Manjaro
+    elif 'garuda' in platform_description:
+        return OS.Garuda
     else:
         return OS.Other
 

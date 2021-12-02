@@ -92,7 +92,7 @@ if machine_os == OS.Ubuntu:
                             no_update_string='0',
                         ),
                         ])
-elif machine_os == OS.Manjaro:
+elif machine_os in (OS.Manjaro, OS.Garuda, OS.Arch):
     top_widgets.extend([widget.TextBox('U:'),
                         widget.CheckUpdates(
                             display_format='{updates}',
