@@ -464,12 +464,9 @@ class GCal(CachedProxyRequest):
             short_cmd.extend(['--proxy', self.https_proxy])
 
         short_cmd.extend(['--nocolor',
-                          '--prefix',
-                          '%a %b %d',
                           'agenda',
                           past_dt.strftime(GCal.DATE_FORMAT),
                           short_dt.strftime(GCal.DATE_FORMAT),
-                          '--noallday',
                           ])
 
         proc = subprocess.check_output(short_cmd)
@@ -484,8 +481,6 @@ class GCal(CachedProxyRequest):
             long_cmd.extend(['--proxy', self.https_proxy])
 
         long_cmd.extend(['--nocolor',
-                         '--prefix',
-                         '%a %b %d',
                          'agenda',
                          short_dt.strftime(GCal.DATE_FORMAT),
                          future_dt.strftime(GCal.DATE_FORMAT),
