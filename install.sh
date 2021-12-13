@@ -83,7 +83,7 @@ $HOME/.pyenv/versions/qtile/bin/pip install --upgrade jinja2 \
 $HOME/.pyenv/versions/qtile/bin/pip install --upgrade cairocffi pangocairocffi pycairo
 $HOME/.pyenv/versions/qtile/bin/pip install -r requirements.txt
 
-rm -r ~/.config/qtile
+rm -r ~/.config/qtile || true
 ln -ns "$(pwd)" ~/.config/qtile
 
 bash ~/.config/qtile/SpotifyController/install.sh
