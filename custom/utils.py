@@ -89,3 +89,12 @@ def run_command(cmd_str, raise_called_process_exception=True):
             return subprocess.Popen(cmd, shell=False)
         except (subprocess.CalledProcessError, FileNotFoundError):
             return None
+
+
+def start_ssh_agent():
+    cmd = "ssh-add -l; [ $? == 2 ] && eval $(ssh-agent)"
+
+    try:
+        return subprocess.Popen(cmd, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(str(e))
