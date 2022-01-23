@@ -7,6 +7,17 @@ from libqtile.config import (Group,
 from custom.constants import MOD, SHIFT
 from libqtile.command import lazy
 
+
+def toscreen(qtile, group_name):
+    if group_name == qtile.current_screen.group.name:
+        qtile.current_screen.set_group(qtile.current_screen.previous_group)
+    else:
+        for idx, group in enumerate(qtile.groups):
+            if group_name == group.name:
+                qtile.current_screen.set_group(group)
+                break
+
+
 GROUPS = [
     ScratchPad("scratchpad", [
         # define a drop down terminal.
@@ -85,7 +96,7 @@ for group in GROUPS:
 
     GROUP_KEYS.extend([
         # mod1 + letter of group = switch to group
-        Key([MOD], group.name, lazy.group[group.name].toscreen()),
+        Key([MOD], group.name, lazy.function(toscreen, group.name)),
 
         # mod1 + shift + letter = switch to & move focused window to group
         Key([MOD, SHIFT], group.name, lazy.window.togroup(group.name)),
