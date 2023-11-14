@@ -28,7 +28,7 @@ then
                   gobject-introspection \
                   pkgconf \
                   dunst
-    pamac build picom-jonaburg-git
+    pamac install picom
 fi
 
 if [ $USE_APT_GET == 'true' ]
