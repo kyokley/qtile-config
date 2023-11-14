@@ -44,15 +44,15 @@ top_widgets = [
               ),
 ]
 
-if mount_exists(HOME_DIR):
-    top_widgets.append(
-        widget.DF(visible_on_warn=False,
-                  foreground=extension_defaults.foreground,
-                  format='{p}: {r:.0f}%',
-                  partition=HOME_DIR,
-                  mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx ncdu {HOME_DIR}')},
-                  )
-    )
+# if mount_exists(HOME_DIR):
+#     top_widgets.append(
+#         widget.DF(visible_on_warn=False,
+#                   foreground=extension_defaults.foreground,
+#                   format='{p}: {r:.0f}%',
+#                   partition=HOME_DIR,
+#                   mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(f'{TERM} -bx ncdu {HOME_DIR}')},
+#                   )
+#     )
 
 top_widgets.extend([
     widget.TextBox('Mem:'),
