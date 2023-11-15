@@ -16,7 +16,7 @@ ExtensionDefault = namedtuple(
      ])
 extension_defaults = ExtensionDefault(
     font='sans',
-    fontsize=12,
+    fontsize=18,
     padding=3,
     foreground='AE4CFF',
     background=None,
@@ -25,5 +25,5 @@ extension_defaults = ExtensionDefault(
     border_normal='030303',
     layout_margin=40,
     bar_margin=10,
-    bar_thickness=30,
+    bar_thickness=40,
 )
