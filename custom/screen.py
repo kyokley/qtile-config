@@ -183,10 +183,12 @@ if BATTERY_PATH.exists():
     ])
 
 top_widgets.extend([
-    widget.Systray(),
+    widget.Systray(icon_size=extension_defaults.iconsize),
     widget.Clock(
         foreground='FFDE3B',
         format='%a %b %d %H:%M:%S',
+        font=extension_defaults.font,
+        fontsize=extension_defaults.fontsize,
     ),
 ])
 
