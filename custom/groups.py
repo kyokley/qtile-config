@@ -65,6 +65,7 @@ GROUPS.extend([Group('5',
                      ),
                Group('9',
                      matches=[Match(wm_class='Thunderbird'),
+                              Match(wm_class='Mail'),
                               Match(title='Outlook'),
                               Match(wm_class='crx_faolnafnngnfdaknnbpnkhgohbobgegn'),  # Outlook PWA
                               ],
