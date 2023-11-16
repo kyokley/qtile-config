@@ -36,6 +36,7 @@ top_widgets = [
                    font=extension_defaults.font,
                    fontsize=extension_defaults.fontsize,
                    ),
+    widget.Spacer(length=10),
     WallpaperDir(
         directory=WALLPAPER_DIR.expanduser(),
         foreground=extension_defaults.foreground,
