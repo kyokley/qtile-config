@@ -156,7 +156,10 @@ pamac checkupdates | awk 'BEGIN{RS="\n\n";FS=OFS="\n"} NR==1 {print $0}' | awk '
                         ])
 
 top_widgets.extend([
-    widget.TextBox('W:'),
+    widget.TextBox('W:',
+                   font=extension_defaults.font,
+                   fontsize=extension_defaults.fontsize,
+                   ),
     Weather(
         normal_foreground=extension_defaults.foreground,
         update_interval=3600,  # Update every hour
