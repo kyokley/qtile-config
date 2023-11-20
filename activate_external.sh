@@ -48,6 +48,10 @@ echo
 echo "Activating external with resolution $VIRTUAL_MODE"
 DISPLAY=:0 xrandr --output $VIRTUAL_DISPLAY --${LEFT_OR_RIGHT}-of $PRIMARY_DISPLAY --mode $VIRTUAL_MODE --output $PRIMARY_DISPLAY --primary
 restart_qtile
+if [ $? -ne 0 ]
+then
+    $HOME/.pyenv/versions/qtile/bin/qtile start &
+fi
 
 # DISPLAY_LINK_CARD=$(pactl list short cards | grep DisplayLink | awk '{print $2}')
 # if [ $? -eq 0 ]
