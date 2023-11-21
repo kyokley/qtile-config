@@ -109,8 +109,7 @@ top_widgets.extend([
                font=extension_defaults.font,
                fontsize=extension_defaults.fontsize,
                interface='wlp0s20f3',
-               # format='{interface}: {down} ↓↑ {up}',
-               format='{down} ↓↑ {up}',
+               format='{down:.0f}{down_suffix} ↓↑ {up:.0f}{up_suffix}',
                update_interval=2),
 ])
 
