@@ -108,7 +108,7 @@ top_widgets.extend([
     widget.Net(foreground=extension_defaults.foreground,
                font=extension_defaults.font,
                fontsize=extension_defaults.fontsize,
-               interface='wlp0s20f3',
+               interface='enp14s0',
                format='{down:.0f}{down_suffix} ↓↑ {up:.0f}{up_suffix}',
                update_interval=2),
 ])
