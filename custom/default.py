@@ -17,7 +17,7 @@ ExtensionDefault = namedtuple(
      ])
 extension_defaults = ExtensionDefault(
     font='sans',
-    fontsize=12,
+    fontsize=18,
     iconsize=30,
     padding=3,
     foreground='AE4CFF',
