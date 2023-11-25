@@ -142,9 +142,6 @@ then
 fi
 xset dpms 600 600 600
 
-python3 -m venv /tmp/gcal_env
-/tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
-/tmp/gcal_env/bin/gcalcli agenda
-rm -rf /tmp/gcal_env
-
 docker pull kyokley/gcalcli
+echo "Don't forget to run the Gcal CLI registration command to setup OAuth!"
+echo "Done!"

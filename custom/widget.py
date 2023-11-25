@@ -25,16 +25,18 @@ BUTTON_LEFT = 1
 BUTTON_MIDDLE = 2
 BUTTON_RIGHT = 3
 
-VT_CMD = ('docker run --rm -v /home/yokley/.ssh:/root/.ssh '
+VT_USERNAME = 'yokley'
+
+VT_CMD = (f'docker run --rm -v {str(Path.home())}/.ssh:/root/.ssh '
           '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
-          '--env VT_USERNAME=yokley '
+          f'--env VT_USERNAME={VT_USERNAME} '
           '--env VT_DEFAULT_LIST=personal '
           '--env VT_PROXY= '
-          f'--env VT_PRIVATE_KEY={"/root/.ssh/id_ed25519" if Path("/home/yokley/.ssh/id_ed25519").exists() else ""} '
+          f'--env VT_PRIVATE_KEY={"/root/.ssh/id_ed25519" if (Path.home() / ".ssh/id_ed25519").exists() else ""} '
           '--net=host '
           'kyokley/vt list -quW')
 GCAL_CMD = ('docker run --rm '
-            '-v /home/yokley/.gcalcli_oauth:/root/.gcalcli_oauth '
+            f'-v {str(Path.home())}/.gcalcli_oauth:/root/.gcalcli_oauth '
             'kyokley/gcalcli')
 KRILL_CMD = (
     'docker run --rm --cpus=.25 kyokley/krill '
