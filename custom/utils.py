@@ -4,11 +4,13 @@ import subprocess
 from enum import Enum, auto
 
 
+FLATPAK_EXECUTABLE = 'flatpak'
 POSSIBLE_BROWSERS = ('brave',
                      'brave-browser',
                      'vivaldi',
                      'google-chrome',
                      'firefox',
+                     f'{FLATPAK_EXECUTABLE} run com.brave.Browser',
                      )
 
 
@@ -57,9 +59,17 @@ def determine_os():
 
 def _which_browser(browser):
     try:
-        return subprocess.check_output(shlex.split(f'which {browser}')).strip().decode()
+
+        if FLATPAK_EXECUTABLE not in browser:
+            return subprocess.check_output(shlex.split(f'which {browser}')).strip().decode()
+        else:
+            browser_id = browser.split()[-1]
+            subprocess.check_output(f'{FLATPAK_EXECUTABLE} list | grep {browser_id}',
+                                    shell=True).strip().decode()
+            return browser
     except subprocess.CalledProcessError:
-        return None
+        pass
+    return None
 
 
 def determine_browser():
