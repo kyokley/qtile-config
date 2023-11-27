@@ -42,11 +42,15 @@ then
                          nitrogen \
                          xautolock \
                          terminator \
+                         libev-dev \
                          libx11-xcb-dev \
                          libxcb-render-util0-dev \
                          libxcb-damage0-dev \
                          libxcb-sync-dev \
                          libxcb-present-dev \
+                         libxcb-xinerama0-dev \
+                         libxcb-composite0-dev \
+                         libxcb-image0-dev \
                          libdbus-1-dev \
                          uthash-dev \
                          libconfig-dev \
@@ -58,7 +62,9 @@ then
                          pkg-config \
                          python3-dev \
                          gir1.2-gtk-3.0 \
+                         cmake \
                          meson
+    rm -rf /tmp/picom || true
     git clone https://github.com/jonaburg/picom /tmp/picom
     cd /tmp/picom
     meson --buildtype=release . build
@@ -136,9 +142,6 @@ then
 fi
 xset dpms 600 600 600
 
-python3 -m venv /tmp/gcal_env
-/tmp/gcal_env/bin/pip install git+https://github.com/kyokley/gcalcli.git
-/tmp/gcal_env/bin/gcalcli agenda
-rm -rf /tmp/gcal_env
-
 docker pull kyokley/gcalcli
+echo "Don't forget to run the Gcal CLI registration command to setup OAuth!"
+echo "Done!"

@@ -13,8 +13,6 @@ from libqtile.config import Screen
 from custom.layout import ScreenLayout
 from custom.utils import OS, determine_os, mount_exists
 
-PYTHON_ENV_DIR = '/home/yokley/.pyenv/versions/qtile'
-
 BATTERY_PATH = Path('/sys/class/power_supply/BAT0')
 WALLPAPER_DIR = Path('~/Pictures/wallpapers')
 HOME_DIR = '/home'
