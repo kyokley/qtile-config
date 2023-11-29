@@ -11,7 +11,7 @@ from custom.widget import (WallpaperDir,
 from custom.default import extension_defaults
 from libqtile.config import Screen
 from custom.layout import ScreenLayout
-from custom.utils import OS, determine_os, mount_exists
+from custom.utils import OS, determine_os
 
 BATTERY_PATH = Path('/sys/class/power_supply/BAT0')
 WALLPAPER_DIR = Path('~/Pictures/wallpapers')
