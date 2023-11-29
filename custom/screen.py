@@ -206,6 +206,8 @@ SCREENS = [
                     other_screen_border=extension_defaults.inactive_foreground,
                     font=extension_defaults.font,
                     fontsize=extension_defaults.fontsize,
+                    use_mouse_wheel=False,
+                    mouse_callbacks={'Button1': lambda: None},
                 ),
                 widget.Spacer(length=10),
                 ScreenLayout(width=bar.STRETCH,
