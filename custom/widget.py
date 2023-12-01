@@ -27,12 +27,24 @@ BUTTON_RIGHT = 3
 
 VT_USERNAME = 'yokley'
 
+VT_PRIVATE_KEYS = (
+    'id_vt',
+    'id_ed25519',
+    'id_rsa',
+)
+for key in VT_PRIVATE_KEYS:
+    if (Path.home() / ".ssh" / key).exists():
+        VT_PRIVATE_KEY = Path('/root') / '.ssh' / key
+        break
+else:
+    VT_PRIVATE_KEY = ''
+
 VT_CMD = (f'docker run --rm -v {str(Path.home())}/.ssh:/root/.ssh '
           '--env VT_URL=https://almagest.dyndns.org:7001/vittlify/ '
           f'--env VT_USERNAME={VT_USERNAME} '
           '--env VT_DEFAULT_LIST=personal '
           '--env VT_PROXY= '
-          f'--env VT_PRIVATE_KEY={"/root/.ssh/id_ed25519" if (Path.home() / ".ssh/id_ed25519").exists() else ""} '
+          f'--env VT_PRIVATE_KEY={VT_PRIVATE_KEY} '
           '--net=host '
           'kyokley/vt list -quW')
 GCAL_CMD = ('docker run --rm '
