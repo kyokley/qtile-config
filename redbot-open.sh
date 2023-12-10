@@ -15,5 +15,5 @@ function redbot-cmd(){
 issue=$(redbot-cmd issue --quiet | sed 's/\s\+$//' | grep -vE '^$' | rofi -dmenu -i -multi-select -p "redbot" | awk '{print $1}')
 if [ $? -eq 0 ] && [ ! -z "$issue" ]
 then
-    firefox "${REDBOT_REDMINE_URL}${issue}"
+    brave "${REDBOT_REDMINE_URL}${issue}"
 fi
