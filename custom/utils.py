@@ -5,13 +5,14 @@ from enum import Enum, auto
 
 
 FLATPAK_EXECUTABLE = 'flatpak'
-POSSIBLE_BROWSERS = ('brave',
-                     'brave-browser',
-                     'vivaldi',
-                     'google-chrome',
-                     'firefox',
-                     f'{FLATPAK_EXECUTABLE} run com.brave.Browser',
-                     )
+POSSIBLE_BROWSERS = (
+    f'{FLATPAK_EXECUTABLE} run com.brave.Browser',
+    'brave',
+    'brave-browser',
+    'vivaldi',
+    'google-chrome',
+    'firefox',
+)
 
 
 class OS(Enum):
