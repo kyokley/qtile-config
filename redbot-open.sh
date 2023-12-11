@@ -7,8 +7,6 @@ function redbot-cmd(){
       -v $HOME/.config/redmine:/root/.config/redmine \
       -e KEY_PATH=/root/.config/redmine/key \
       -e USER_INDEX=${REDBOT_DEFAULT_USER_INDEX} \
-      -e ALL_PROXY="socks5://${DOCKER_LOCALHOST}:8081" \
-      --net host \
       kyokley/redbot $@
 }
 
