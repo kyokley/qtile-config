@@ -128,4 +128,6 @@ def autostart():
     # Disable screensaver
     run_command('xset s off')
 
+    run_command('systemctl --user start docker-desktop')
+
     start_ssh_agent()
