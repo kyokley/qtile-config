@@ -110,24 +110,24 @@ wmname = "LG3D"
 @hook.subscribe.startup_once
 def autostart():
     run_command('nitrogen --restore')
-    run_command('nm-applet')
-    run_command('dunst', raise_called_process_exception=False)
-    run_command('blueman-applet', raise_called_process_exception=False)
-    run_command('mntray', raise_called_process_exception=False)
-    run_command('protonmail-bridge', raise_called_process_exception=False)
+    # run_command('nm-applet')
+    # run_command('dunst', raise_called_process_exception=False)
+    # run_command('blueman-applet', raise_called_process_exception=False)
+    # run_command('mntray', raise_called_process_exception=False)
+    # run_command('protonmail-bridge', raise_called_process_exception=False)
 
-    locker_path = Path('~/.config/qtile/force_lock.sh')
-    run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
+    # locker_path = Path('~/.config/qtile/force_lock.sh')
+    # run_command(f'''xautolock -locker "{locker_path.expanduser()}" -time 10 -notify 10 -notifier "notify-send -t 5000 -i gtk-dialog-info 'Locking in 10 seconds'"''')
 
-    xautolock_status_path = Path('/tmp/xautolock.status')
-    with open(xautolock_status_path, 'w') as f:
-        f.write('enabled')
+    # xautolock_status_path = Path('/tmp/xautolock.status')
+    # with open(xautolock_status_path, 'w') as f:
+    #     f.write('enabled')
 
-    run_command('xset dpms 600 600 600')
+    # run_command('xset dpms 600 600 600')
 
     # Disable screensaver
-    run_command('xset s off')
+    # run_command('xset s off')
 
-    run_command('systemctl --user start docker-desktop')
+    # run_command('systemctl --user start docker-desktop')
 
-    start_ssh_agent()
+    # start_ssh_agent()

@@ -16,7 +16,7 @@ ExtensionDefault = namedtuple(
      'bar_thickness',
      ])
 extension_defaults = ExtensionDefault(
-    font='sans',
+    font='Inconsolata',
     fontsize=18,
     iconsize=30,
     padding=3,
