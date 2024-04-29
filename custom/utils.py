@@ -28,7 +28,7 @@ def determine_os():
     try:
         lsb_info = subprocess.check_output(shlex.split('lsb_release -d'))
         lsb_info = str(lsb_info).lower()
-    except subprocess.CalledProcessError:
+    except Exception:
         lsb_info = ''
 
     if 'debian' in lsb_info:
