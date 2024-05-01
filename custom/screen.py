@@ -191,10 +191,10 @@ top_widgets.extend([
         font=extension_defaults.font,
         fontsize=extension_defaults.fontsize,
     ),
-    widget.Notify(
-        font=extension_defaults.font,
-        fontsize=extension_defaults.fontsize,
-    )
+    # widget.Notify(
+    #     font=extension_defaults.font,
+    #     fontsize=extension_defaults.fontsize,
+    # )
 ])
 
 SCREENS = [
