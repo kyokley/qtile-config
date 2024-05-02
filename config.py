@@ -26,7 +26,6 @@
 
 
 from itertools import chain
-from pathlib import Path
 from libqtile.config import (Drag,
                              Click,
                              Match,
@@ -34,7 +33,7 @@ from libqtile.config import (Drag,
 from libqtile.command import lazy
 from libqtile import layout, hook
 from custom.screen import SCREENS
-from custom.utils import run_command, start_ssh_agent
+from custom.utils import run_command
 from custom.keys import KEYS, MOD
 from custom.groups import GROUPS, GROUP_KEYS
 from custom.layout import LAYOUTS

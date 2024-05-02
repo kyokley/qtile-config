@@ -1,7 +1,6 @@
 from pathlib import Path
 from libqtile import bar, widget, qtile
 from custom.widget import (WallpaperDir,
-                           ScreenLockIndicator,
                            Weather,
                            VT,
                            GCal,
@@ -22,11 +21,6 @@ TERM = 'terminator'
 top_widgets = [
     widget.WindowName(
         for_current_screen=True,
-        font=extension_defaults.font,
-        fontsize=extension_defaults.fontsize,
-    ),
-    ScreenLockIndicator(
-        foreground='FF000D',
         font=extension_defaults.font,
         fontsize=extension_defaults.fontsize,
     ),
